@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "271985363821",
+    "project_id": "smile-plus-f87ef",
+    "storage_bucket": "smile-plus-f87ef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271985363821:android:4c39c07a22836e1d786864",
+        "android_client_info": {
+          "package_name": "com.firstlogicmetalab.smile_erp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "271985363821-a8lt56lfai9dikrr907gnq3bd16255ck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.firstlogicmetalab.smile_erp",
+            "certificate_hash": "46701aef85a708589e2f5fefa63f91f8efeeb87e"
+          }
+        },
+        {
+          "client_id": "271985363821-k3ie36cvpvo5rn9npnio38isr63njrqe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfDNaLvb1hSULZGGJKLIorGn_P6Ce8zFE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "271985363821-k3ie36cvpvo5rn9npnio38isr63njrqe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

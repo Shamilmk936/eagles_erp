@@ -1,0 +1,1585 @@
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:smile_erp/app/tabs/Enquiry/AddEnquiry.dart';
+import 'package:smile_erp/auth/auth_util.dart';
+import 'package:smile_erp/backend/backend.dart';
+import 'package:flutter/services.dart';
+import 'package:multiple_select/Item.dart';
+import 'package:multiple_select/multi_filter_select.dart';
+import 'package:multiple_select/multiple_select.dart';
+import '../../../Login/login.dart';
+import '../../../flutter_flow/flutter_flow_icon_button.dart';
+import '../../../flutter_flow/flutter_flow_theme.dart';
+import '../../../flutter_flow/flutter_flow_util.dart';
+import '../../../flutter_flow/flutter_flow_widgets.dart';
+import 'package:flutter/material.dart';
+import '../../../flutter_flow/upload_media.dart';
+import '../../app_widget.dart';
+import '../../pages/home_page/home.dart';
+import 'package:intl/intl.dart';
+
+class EditEnquiry extends StatefulWidget {
+  final String eId;
+
+  const EditEnquiry({Key key, this.eId}) : super(key: key);
+
+  @override
+  _EditEnquiryState createState() => _EditEnquiryState();
+}
+
+class _EditEnquiryState extends State<EditEnquiry> {
+  TextEditingController name;
+  TextEditingController email;
+  TextEditingController mobile;
+  TextEditingController place;
+  TextEditingController university;
+  TextEditingController additionalInfo;
+  TextEditingController qualification;
+  TextEditingController institute;
+  TextEditingController branch;
+  TextEditingController course;
+  TextEditingController address;
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  List educationDetails = [];
+
+
+  List courseList=[];
+  getCourses(String selectesUniversity)async{
+
+    print('working .....');
+    universityCourses=[];
+    DocumentSnapshot doc= await FirebaseFirestore.instance
+        .collection('university')
+        .doc(selectesUniversity)
+        .get();
+    courseList=doc.get('courses');
+    print(courseList);
+    for(var item in courseList){
+      universityCourses.add(CourseIdToName[item]);
+    }
+    print(universityCourses);
+    print('Jjjjjjjjjjjjjjj');
+    course.text=universityCourses[0];
+
+    if(mounted){
+      setState(() {
+
+      });
+    }
+  }
+
+  setSearchParam(String caseNumber) {
+    List<String> caseSearchList = List<String>();
+    String temp = "";
+
+    List<String> nameSplits = caseNumber.split(" ");
+    for (int i = 0; i < nameSplits.length; i++) {
+      String name = "";
+
+      for (int k = i; k < nameSplits.length; k++) {
+        name = name + nameSplits[k] + " ";
+      }
+      temp = "";
+
+      for (int j = 0; j < name.length; j++) {
+        temp = temp + name[j];
+        caseSearchList.add(temp.toUpperCase());
+      }
+    }
+    return caseSearchList;
+  }
+
+  getData() async {
+    DocumentSnapshot data= await FirebaseFirestore.instance
+        .collection('enquiry')
+        .doc(widget.eId)
+        .get();
+
+    name.text = data.get('name');
+    place.text = data.get('place');
+    mobile.text = data.get('mobile');
+    email.text = data.get('email');
+    additionalInfo.text = data.get('additionalInfo');
+    university.text=UniversityIdToName[data.get('university')];
+    // universityList.add(data.get('university'));
+    course.text = CourseIdToName[data.get('courses')];
+    universityCourses.add(data.get('courses'));
+    if(data.get('dob')!=null){
+      dateOfBirth = data.get('dob').toDate()??'';
+    }
+    if (educationDetails.length == 0) {
+      educationDetails = data.get('educationalDetails');
+    }
+
+  }
+
+  String selectedUniversity;
+  DateTime dateOfBirth;
+  String yearOfPassout;
+  DateTime selectedDate = DateTime.now();
+
+
+  bool loaded = true;
+
+  @override
+  void initState() {
+
+    name = TextEditingController();
+    email = TextEditingController();
+    mobile = TextEditingController();
+    place = TextEditingController();
+    qualification = TextEditingController();
+    institute = TextEditingController();
+    university = TextEditingController(text: "");
+    additionalInfo = TextEditingController();
+    branch = TextEditingController();
+    course = TextEditingController(text: "");
+    address = TextEditingController();
+    // universityCourses.add("");
+    getData();
+    super.initState();
+
+
+  }
+
+  DocumentSnapshot data;
+
+  @override
+  Widget build(BuildContext context) {
+    print("------------------------------------------------------");
+    print(universityList.contains(university.text));
+    print(universityCourses.contains(course.text));
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: Color(0xFF383838)),
+        automaticallyImplyLeading: true,
+        title: Text(
+          'Edit Details',
+          style: FlutterFlowTheme.title2.override(
+            fontFamily: 'Lexend Deca',
+            color: Color(0xFF090F13),
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        actions: [],
+        centerTitle: true,
+        elevation: 5,
+      ),
+      backgroundColor: Color(0xFFECF0F5),
+      body: Padding(
+              padding: EdgeInsetsDirectional.fromSTEB(16, 8, 16, 16),
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Material(
+                                      color: Colors.transparent,
+                                      elevation: 3,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Container(
+                                        width: 950,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(12),
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              20, 10, 0, 20),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Text(
+                                                'Personal Details',
+                                                style: FlutterFlowTheme
+                                                    .bodyText2
+                                                    .override(
+                                                  fontFamily: 'Montserrat',
+                                                  color: Color(0xFF8B97A2),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(5, 10, 30, 5),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Container(
+                                                        width: 350,
+                                                        height: 60,
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(8),
+                                                          border: Border.all(
+                                                            color: Color(
+                                                                0xFFE6E6E6),
+                                                          ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                              16, 0, 0, 0),
+                                                          child: TextFormField(
+                                                            controller: name,
+                                                            obscureText: false,
+                                                            decoration:
+                                                            InputDecoration(
+                                                              labelText: 'Name',
+                                                              labelStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              hintText:
+                                                              'Please Enter Name',
+                                                              hintStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              enabledBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                              focusedBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            style: FlutterFlowTheme
+                                                                .bodyText2
+                                                                .override(
+                                                                fontFamily:
+                                                                'Montserrat',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500,
+                                                                fontSize:
+                                                                13),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10,),
+                                                    Expanded(
+                                                      child: Container(
+                                                        width: 350,
+                                                        height: 60,
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(8),
+                                                          border: Border.all(
+                                                            color: Color(
+                                                                0xFF8B97A2),
+                                                          ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                              16, 0, 0, 0),
+                                                          child: TextFormField(
+                                                            controller: place,
+                                                            obscureText: false,
+                                                            decoration:
+                                                            InputDecoration(
+                                                              labelText:
+                                                              'Place',
+                                                              labelStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              hintText:
+                                                              'Please Enter Place Name',
+                                                              hintStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              enabledBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                              focusedBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            style: FlutterFlowTheme
+                                                                .bodyText2
+                                                                .override(
+                                                                fontFamily:
+                                                                'Montserrat',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500,
+                                                                fontSize:
+                                                                12),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Expanded(
+                                                      child: Container(
+                                                        width: 350,
+                                                        color: Colors.white,
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                              16, 0, 0, 0),
+                                                          child: TextFormField(
+                                                            controller: mobile,
+                                                            inputFormatters: <
+                                                                TextInputFormatter>[
+                                                              LengthLimitingTextInputFormatter(
+                                                                  10)
+                                                            ],
+                                                            autovalidateMode:
+                                                            AutovalidateMode
+                                                                .onUserInteraction,
+                                                            keyboardType:
+                                                            TextInputType
+                                                                .phone,
+                                                            validator: (email) {
+                                                              if (email
+                                                                  .isEmpty) {
+                                                                return "Enter your phone number";
+                                                              } else if (!RegExp(
+                                                                  r'(^(?:[+0]9)?[0-9]{10,12}$)')
+                                                                  .hasMatch(
+                                                                  email)) {
+                                                                return "phone number is not valid";
+                                                              } else {
+                                                                return null;
+                                                              }
+                                                            },
+                                                            decoration: InputDecoration(
+                                                                labelText:
+                                                                'Mobile',
+                                                                labelStyle: FlutterFlowTheme.bodyText2.override(
+                                                                    fontFamily:
+                                                                    'Montserrat',
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight: FontWeight
+                                                                        .w500,
+                                                                    fontSize:
+                                                                    12),
+                                                                hintText:
+                                                                'Please Enter Mobile No',
+                                                                hintStyle: FlutterFlowTheme.bodyText2.override(
+                                                                    fontFamily:
+                                                                    'Montserrat',
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                    fontSize:
+                                                                    12),
+                                                                errorBorder:
+                                                                errorOutlineInputBOrder,
+                                                                border:
+                                                                outlineInputBorder,
+                                                                disabledBorder:
+                                                                outlineInputBorder,
+                                                                focusedErrorBorder:
+                                                                errorOutlineInputBOrder,
+                                                                enabledBorder:
+                                                                outlineInputBorder,
+                                                                focusedBorder:
+                                                                outlineInputBorder
+                                                            ),
+                                                            style: FlutterFlowTheme
+                                                                .bodyText2
+                                                                .override(
+                                                                fontFamily:
+                                                                'Montserrat',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500,
+                                                                fontSize:
+                                                                12),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(5, 10, 30, 5),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Container(
+                                                        color: Colors.white,
+                                                        padding:
+                                                        EdgeInsets.fromLTRB(
+                                                            0, 10, 0, 0),
+                                                        child: TextFormField(
+                                                          controller: email,
+                                                          autovalidateMode:
+                                                          AutovalidateMode
+                                                              .onUserInteraction,
+                                                          keyboardType:
+                                                          TextInputType
+                                                              .emailAddress,
+                                                          validator: (email) {
+                                                            if (email.isEmpty) {
+                                                              return "Enter your email";
+                                                            } else if (!RegExp(
+                                                                r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
+                                                                .hasMatch(
+                                                                email)) {
+                                                              return "Email not valid";
+                                                            } else {
+                                                              return null;
+                                                            }
+                                                          },
+                                                          decoration: InputDecoration(
+                                                              labelText:
+                                                              'Email',
+                                                              labelStyle: FlutterFlowTheme.bodyText2.override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize: 12),
+                                                              hintText:
+                                                              'Please Enter Email',
+                                                              hintStyle: FlutterFlowTheme.bodyText2.override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize: 12),
+                                                              errorBorder:
+                                                              errorOutlineInputBOrder,
+                                                              border:
+                                                              outlineInputBorder,
+                                                              disabledBorder:
+                                                              outlineInputBorder,
+                                                              focusedErrorBorder:
+                                                              errorOutlineInputBOrder,
+                                                              enabledBorder:
+                                                              outlineInputBorder,
+                                                              focusedBorder:
+                                                              outlineInputBorder),
+                                                          style: FlutterFlowTheme
+                                                              .bodyText2
+                                                              .override(
+                                                              fontFamily:
+                                                              'Montserrat',
+                                                              color: Colors
+                                                                  .black,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .w500,
+                                                              fontSize: 13),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Expanded(
+                                                      child: InkWell(
+                                                        onTap: () async {
+                                                          final DateTime selected = await showDatePicker(
+                                                            fieldHintText: 'dd/mm/yyyy',
+                                                            context: context,
+                                                            initialDate: DateTime.now(),
+                                                            firstDate: DateTime(1950),
+                                                            lastDate: DateTime(2050),
+                                                          );
+                                                          if (selected != null && selected != dateOfBirth) {
+                                                            dateOfBirth = DateTime(selected.year,selected.month,selected.day,0,0,0);
+                                                            setState(() {
+                                                              print(selected);
+                                                              print(dateOfBirth);
+                                                              print(DateTime(selected.year,selected.month,selected.day,0,0,0));
+                                                              print('fffffff');
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          width: 350,
+                                                          height: 60,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                            BorderRadius.circular(8),
+                                                            border: Border.all(
+                                                              color: Color(0xFFE6E6E6),
+                                                            ),
+                                                          ),
+                                                          child: Padding(
+                                                            padding: EdgeInsets.fromLTRB(
+                                                                16, 10, 0, 0),
+                                                            child: Container(
+                                                              child:Center(child:dateOfBirth==null?
+                                                              Text('please choose')
+                                                                  :Text("${dateOfBirth.day}/${dateOfBirth.month}/${dateOfBirth.year}",
+                                                                style: FlutterFlowTheme
+                                                                    .bodyText2
+                                                                    .override(
+                                                                    fontFamily: 'Montserrat',
+                                                                    color: Colors.black,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: 12
+
+                                                                ), ),
+
+                                                              ),
+
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsetsDirectional.fromSTEB(5, 10, 30, 5),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding: EdgeInsetsDirectional.fromSTEB(10, 12, 0, 0),
+                                                        child: Container(
+                                                            width: MediaQuery.of(context).size.width*0.2,
+                                                            height: 60,
+                                                            decoration: BoxDecoration(
+                                                              color: Colors.white,
+                                                              borderRadius: BorderRadius.circular(8),
+                                                              border: Border.all(
+                                                                color: Color(0xFFE6E6E6),
+                                                              ),
+                                                            ),
+                                                            child:
+                                                            CustomDropdown.search(
+                                                              hintText: 'Select university',hintStyle: TextStyle(color:Colors.black),
+                                                              items: universityList,
+                                                              controller: university,
+                                                              onChanged: (text){
+                                                                setState(() {
+                                                                  selectedUniversity=UniversityNameToId[university.text];
+                                                                  print(selectedUniversity);
+                                                                  print('mmmmmmm');
+                                                                  // universityCourses=[""];
+                                                                  course.text='';
+                                                                  getCourses(selectedUniversity);
+
+                                                                });
+                                                              },
+                                                            )
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    university.text!=null && universityCourses.length!=0?
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding: EdgeInsetsDirectional.fromSTEB(10, 12, 0, 0),
+                                                        child: Container(
+                                                          width: MediaQuery.of(context).size.width*0.2,
+                                                          height: 60,
+                                                          decoration: BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius: BorderRadius.circular(8),
+                                                            border: Border.all(
+                                                              color: Color(0xFFE6E6E6),
+                                                            ),
+                                                          ),
+                                                          child:
+                                                          CustomDropdown.search(
+                                                            hintText: 'Select course',hintStyle: TextStyle(color:Colors.black),
+                                                            items: universityCourses,
+                                                            controller: course,
+                                                            // excludeSelected: false,
+                                                            onChanged: (text){
+                                                              setState(() {
+                                                              });
+                                                              },
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ) 
+                                                        :Container(),
+
+
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Material(
+                                      color: Colors.transparent,
+                                      elevation: 3,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Container(
+                                        width: 950,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                          BorderRadius.circular(12),
+                                        ),
+                                        child: Padding(
+                                          padding:
+                                          EdgeInsetsDirectional.fromSTEB(
+                                              20, 10, 0, 20),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Text(
+                                                'Educational Details',
+                                                style: FlutterFlowTheme
+                                                    .bodyText2
+                                                    .override(
+                                                  fontFamily: 'Montserrat',
+                                                  color: Color(0xFF8B97A2),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(5, 10, 30, 5),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Container(
+                                                        width: 350,
+                                                        height: 60,
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(8),
+                                                          border: Border.all(
+                                                            color: Color(
+                                                                0xFF8B97A2),
+                                                          ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                              16, 0, 0, 0),
+                                                          child: TextFormField(
+                                                            controller:
+                                                            qualification,
+                                                            obscureText: false,
+                                                            decoration:
+                                                            InputDecoration(
+                                                              labelText:
+                                                              'Qualification',
+                                                              labelStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              hintText:
+                                                              'Please Enter Qualification',
+                                                              hintStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              enabledBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                              focusedBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            style: FlutterFlowTheme
+                                                                .bodyText2
+                                                                .override(
+                                                                fontFamily:
+                                                                'Montserrat',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500,
+                                                                fontSize:
+                                                                13),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Expanded(
+                                                      child: Container(
+                                                        width: 350,
+                                                        height: 60,
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(8),
+                                                          border: Border.all(
+                                                            color: Color(
+                                                                0xFFE6E6E6),
+                                                          ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                              16, 0, 0, 0),
+                                                          child: TextFormField(
+                                                            controller:
+                                                            institute,
+                                                            obscureText: false,
+                                                            decoration:
+                                                            InputDecoration(
+                                                              labelText:
+                                                              'institute',
+                                                              labelStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              hintText:
+                                                              'Please Enter institute name',
+                                                              hintStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              enabledBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                              focusedBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            style: FlutterFlowTheme
+                                                                .bodyText2
+                                                                .override(
+                                                                fontFamily:
+                                                                'Montserrat',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500,
+                                                                fontSize:
+                                                                12),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Expanded(
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          showDatePicker(
+                                                              context:
+                                                              context,
+                                                              initialDate:
+                                                              selectedDate,
+                                                              firstDate:
+                                                              DateTime(
+                                                                  1901,
+                                                                  1),
+                                                              lastDate:
+                                                              DateTime(
+                                                                  2300,
+                                                                  1))
+                                                              .then((value) {
+                                                            setState(() {
+                                                              DateFormat(
+                                                                  "d-MM-y")
+                                                                  .format(
+                                                                  value);
+
+                                                              Timestamp
+                                                              passoutYear =
+                                                              Timestamp.fromDate(DateTime(
+                                                                  value
+                                                                      .year,
+                                                                  value
+                                                                      .month,
+                                                                  value.day,
+                                                                  0,
+                                                                  0,
+                                                                  0));
+
+                                                              yearOfPassout =
+                                                                  dateTimeFormat(
+                                                                      'd-MMM-y',
+                                                                      passoutYear
+                                                                          .toDate());
+                                                              print(
+                                                                  yearOfPassout);
+                                                              selectedDate =
+                                                                  value;
+                                                            });
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          width: 350,
+                                                          height: 60,
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                8),
+                                                            border: Border.all(
+                                                              color: Color(
+                                                                  0xFFE6E6E6),
+                                                            ),
+                                                          ),
+                                                          child: yearOfPassout ==
+                                                              null ||
+                                                              yearOfPassout ==
+                                                                  ''
+                                                              ? Center(
+                                                            child: Center(
+                                                              child: Text(
+                                                                'choose pass out year',
+                                                                style: FlutterFlowTheme.bodyText2.override(
+                                                                    fontFamily:
+                                                                    'Montserrat',
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight: FontWeight
+                                                                        .w500,
+                                                                    fontSize:
+                                                                    12),
+                                                              ),
+                                                            ),
+                                                          )
+                                                              : Center(
+                                                            child: Text(
+                                                                yearOfPassout),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0, 0, 8, 0),
+                                                      child: FFButtonWidget(
+                                                        onPressed: () {
+                                                          if (qualification
+                                                              .text !=
+                                                              '' &&
+                                                              institute.text !=
+                                                                  '' &&
+                                                              yearOfPassout !=
+                                                                  '') {
+                                                            educationDetails
+                                                                .add({
+                                                              'qualification':
+                                                              qualification
+                                                                  .text,
+                                                              'institute':
+                                                              institute
+                                                                  .text,
+                                                              'year':
+                                                              yearOfPassout,
+                                                            });
+                                                            setState(() {
+                                                              qualification
+                                                                  .text = '';
+                                                              institute.text =
+                                                              '';
+                                                              yearOfPassout =
+                                                              '';
+                                                            });
+                                                          } else {
+                                                            qualification
+                                                                .text ==
+                                                                ''
+                                                                ? showUploadMessage(
+                                                                context,
+                                                                'Please Enter Qualification')
+                                                                : institute.text ==
+                                                                ''
+                                                                ? showUploadMessage(
+                                                                context,
+                                                                'Please Enter Marks')
+                                                                : showUploadMessage(
+                                                                context,
+                                                                'Please Enter Year');
+                                                          }
+                                                        },
+                                                        text: 'Add',
+                                                        options:
+                                                        FFButtonOptions(
+                                                          width: 80,
+                                                          height: 40,
+                                                          color: Colors.teal,
+                                                          textStyle:
+                                                          FlutterFlowTheme
+                                                              .subtitle2
+                                                              .override(
+                                                            fontFamily:
+                                                            'Lexend Deca',
+                                                            color: Colors.white,
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                            FontWeight.bold,
+                                                          ),
+                                                          elevation: 2,
+                                                          borderSide:
+                                                          BorderSide(
+                                                            color: Colors
+                                                                .transparent,
+                                                            width: 1,
+                                                          ),
+                                                          borderRadius: 50,
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: double.infinity,
+                                                child:
+                                                educationDetails.length == 0
+                                                    ? Center(
+                                                    child: Text(
+                                                      'No Details Added...',
+                                                      style: FlutterFlowTheme
+                                                          .bodyText2
+                                                          .override(
+                                                          fontFamily:
+                                                          'Montserrat',
+                                                          color: Color(
+                                                              0xFF8B97A2),
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .bold,
+                                                          fontSize:
+                                                          13),
+                                                    ))
+                                                    : DataTable(
+                                                  horizontalMargin:
+                                                  12,
+                                                  columns: [
+                                                    DataColumn(
+                                                      label: Text(
+                                                        "Sl No",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .bold,
+                                                            fontSize:
+                                                            12),
+                                                      ),
+                                                    ),
+                                                    DataColumn(
+                                                      label: Text(
+                                                          "Qualification",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              12)),
+                                                    ),
+                                                    DataColumn(
+                                                      label: Text(
+                                                          "Institute",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              12)),
+                                                    ),
+                                                    DataColumn(
+                                                      label: Text(
+                                                          "Year",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold,
+                                                              fontSize:
+                                                              12)),
+                                                    ),
+                                                    DataColumn(
+                                                      label: Text("",
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                              FontWeight.bold)),
+                                                    ),
+                                                  ],
+                                                  rows: List.generate(
+                                                    educationDetails
+                                                        .length,
+                                                        (index) {
+                                                      final history =
+                                                      educationDetails[
+                                                      index];
+
+                                                      return DataRow(
+                                                        color: index
+                                                            .isOdd
+                                                            ? MaterialStateProperty.all(Colors
+                                                            .blueGrey
+                                                            .shade50
+                                                            .withOpacity(
+                                                            0.7))
+                                                            : MaterialStateProperty.all(Colors
+                                                            .blueGrey
+                                                            .shade50),
+                                                        cells: [
+                                                          DataCell(Text(
+                                                              (index +
+                                                                  1)
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.bold,
+                                                                  fontSize: 12))),
+                                                          DataCell(Text(
+                                                              history[
+                                                              'qualification'],
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.bold,
+                                                                  fontSize: 12))),
+                                                          DataCell(Text(
+                                                              history['institute'] ??
+                                                                  '',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.bold,
+                                                                  fontSize: 12))),
+                                                          DataCell(Text(
+                                                              history[
+                                                              'year'],
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                  FontWeight.bold,
+                                                                  fontSize: 12))),
+                                                          DataCell(
+                                                            Row(
+                                                              children: [
+                                                                // Generated code for this Button Widget...
+                                                                FlutterFlowIconButton(
+                                                                  borderColor:
+                                                                  Colors.transparent,
+                                                                  borderRadius:
+                                                                  30,
+                                                                  borderWidth:
+                                                                  1,
+                                                                  buttonSize:
+                                                                  50,
+                                                                  icon:
+                                                                  Icon(
+                                                                    Icons.delete,
+                                                                    color: Color(0xFFEE0000),
+                                                                    size: 25,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    bool pressed = await alert(context, 'Do you want Delete');
+
+                                                                    if (pressed) {
+                                                                      educationDetails.removeAt(index);
+
+                                                                      showUploadMessage(context, 'Details Deleted...');
+                                                                      setState(() {});
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          // DataCell(Text(fileInfo.size)),
+                                                        ],
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: 10,
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(5, 10, 30, 5),
+                                                child: Row(
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Expanded(
+                                                      child: Container(
+                                                        width: 440,
+                                                        decoration:
+                                                        BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                          BorderRadius
+                                                              .circular(8),
+                                                          border: Border.all(
+                                                            color: Color(
+                                                                0xFFE6E6E6),
+                                                          ),
+                                                        ),
+                                                        child: Padding(
+                                                          padding: EdgeInsets
+                                                              .fromLTRB(
+                                                              16, 0, 0, 0),
+                                                          child: TextFormField(
+                                                            controller:
+                                                            additionalInfo,
+                                                            obscureText: false,
+                                                            maxLines: 4,
+                                                            decoration:
+                                                            InputDecoration(
+                                                              labelText:
+                                                              'Additional Info',
+                                                              labelStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              hintText:
+                                                              'Please Enter Additional Information',
+                                                              hintStyle: FlutterFlowTheme
+                                                                  .bodyText2
+                                                                  .override(
+                                                                  fontFamily:
+                                                                  'Montserrat',
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                                  fontSize:
+                                                                  12),
+                                                              enabledBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                              focusedBorder:
+                                                              UnderlineInputBorder(
+                                                                borderSide:
+                                                                BorderSide(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  width: 1,
+                                                                ),
+                                                                borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                      4.0),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            style: FlutterFlowTheme
+                                                                .bodyText2
+                                                                .override(
+                                                                fontFamily:
+                                                                'Montserrat',
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .w500,
+                                                                fontSize:
+                                                                13),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: 10,
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment(0.95, 0),
+                                                child: Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      0, 16, 0, 0),
+                                                  child: FFButtonWidget(
+                                                    onPressed: () async {
+                                                      List courseList = [];
+                                                      courseList.add(CourseNameToId[
+                                                      course.text]);
+
+                                                      if (name.text != '' &&
+                                                          place.text != '' &&
+                                                          mobile.text != '' &&
+                                                          course.text != '') {
+                                                        bool proceed = await alert(
+                                                            context,
+                                                            'You want to Update this Enquiry?');
+
+                                                        if (proceed) {
+                                                          FirebaseFirestore.instance
+                                                              .collection('enquiry')
+                                                              .doc(widget.eId)
+                                                              .update({
+                                                            'name': name.text,
+                                                            'place': place.text,
+                                                            'mobile': mobile.text,
+                                                            'email': email.text,
+                                                            'dob': dateOfBirth,
+                                                            'additionalInfo': additionalInfo.text ?? "",
+                                                            'educationalDetails': educationDetails,
+                                                            'courses': CourseNameToId[course.text],
+                                                            'userId': currentUserUid,
+                                                            'branchId': currentbranchId,
+                                                            'userEmail': currentUserEmail,
+                                                            'search': setSearchParam(name.text),
+                                                            'check': false,
+                                                            'status': 0,
+                                                            'enquiryId': widget.eId,
+                                                            'university':UniversityNameToId[university.text],
+                                                          });
+                                                          showUploadMessage(context, 'Enquiry edited Successfully...');
+                                                        }
+                                                      } else {
+                                                        name.text == ''
+                                                            ? showUploadMessage(context, 'Please Enter Name')
+                                                            : place.text == ''
+                                                            ? showUploadMessage(context, 'Please Enter Place')
+                                                            : mobile.text == ''
+                                                            ? showUploadMessage(context, 'Please Enter Mobile Number')
+                                                            : course.text == '' ? showUploadMessage(context, 'Please select course')
+                                                            : showUploadMessage(context, 'Please select course');
+                                                      }
+                                                    },
+                                                    text: 'Update',
+                                                    options: FFButtonOptions(
+                                                      width: 150,
+                                                      height: 50,
+                                                      color: Colors.teal,
+                                                      textStyle:
+                                                      FlutterFlowTheme
+                                                          .subtitle2
+                                                          .override(
+                                                        fontFamily:
+                                                        'Montserrat',
+                                                        color: Colors.white,
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                        FontWeight.w500,
+                                                      ),
+                                                      elevation: 2,
+                                                      borderSide: BorderSide(
+                                                        color:
+                                                        Colors.transparent,
+                                                        width: 2,
+                                                      ),
+                                                      borderRadius: 8,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 10.0,
+                                                    horizontal: 0.0),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+      )
+
+    );
+  }
+}
