@@ -535,6 +535,9 @@ class _PaymentReportState extends State<PaymentReport> {
                       label: Text("Paid",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11)),
                     ),
                     DataColumn(
+                      label: Text("Scholarship",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11)),
+                    ),
+                    DataColumn(
                       label: Text("Due(-scholarship)",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11)),
                     ),
                     DataColumn(
@@ -615,7 +618,7 @@ class _PaymentReportState extends State<PaymentReport> {
                             fontSize: 11,
                             fontWeight: FontWeight.bold,
                           ),)),
-                          DataCell(SelectableText(year==1?'First':year==2?'Second Year'
+                          DataCell(SelectableText(year==1?'First Year':year==2?'Second Year'
                             :'Third Year',
                             style: FlutterFlowTheme.bodyText2.override(
                               fontFamily: 'Lexend Deca',
@@ -624,6 +627,13 @@ class _PaymentReportState extends State<PaymentReport> {
                               fontWeight: FontWeight.bold,
                             ),)),
                           DataCell(  Text(paid.toStringAsFixed(2)
+                              ,style: FlutterFlowTheme.bodyText2.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Colors.black,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              )),),
+                          DataCell(  Text(scholarship.toStringAsFixed(2)
                               ,style: FlutterFlowTheme.bodyText2.override(
                                 fontFamily: 'Lexend Deca',
                                 color: Colors.black,

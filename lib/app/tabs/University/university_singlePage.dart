@@ -56,7 +56,7 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
   TextEditingController search;
   TextEditingController course;
   TextEditingController eligibility;
-  String courseType='Years';
+  String yearOrMonth='Years';
 
   //COURSE EDIT
   String eDuration;
@@ -163,6 +163,7 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
             'available':data['available'],
             'feeList':data['feeList'],
             'totalFee':data['totalFee'],
+            'monthOrYear':data['monthOrYear'],
           });
           print(data);
           print('ggggggggg');
@@ -701,10 +702,16 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                     ),
                                     SizedBox(width: 20,),
                                     FlutterFlowDropDown(
-                                      initialOption: courseType??'Years',
+                                      initialOption: yearOrMonth??'Years',
                                       options: ['Months', 'Years']
                                           .toList(),
-                                      onChanged: (val) => setState(() => courseType = val),
+                                      onChanged: (val){
+                                        setState(() {
+                                          yearOrMonth = val;
+                                          print(yearOrMonth);
+                                          print('vvvvvvvvvvvvvvv');
+                                        });
+                                      },
                                       width: 180,
                                       height: 50,
                                       textStyle: FlutterFlowTheme.bodyText1.override(
@@ -780,80 +787,6 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                         margin: EdgeInsetsDirectional.fromSTEB(12, 4, 12, 4),
                                         hidesUnderline: true,
                                       ),
-                                      // Expanded(
-                                      //   child: Container(
-                                      //     width: 330,
-                                      //     height: 60,
-                                      //     decoration: BoxDecoration(
-                                      //       color: Colors.white,
-                                      //       borderRadius:
-                                      //       BorderRadius.circular(8),
-                                      //       border: Border.all(
-                                      //         color: Color(0xFFE6E6E6),
-                                      //       ),
-                                      //     ),
-                                      //     child: Padding(
-                                      //       padding: EdgeInsets.fromLTRB(
-                                      //           16, 0, 0, 0),
-                                      //       child: TextFormField(
-                                      //         controller: duration,
-                                      //         obscureText: false,
-                                      //         decoration: InputDecoration(
-                                      //           labelText: 'Duration',
-                                      //           labelStyle: FlutterFlowTheme
-                                      //               .bodyText2
-                                      //               .override(
-                                      //             fontFamily: 'Montserrat',
-                                      //             color: Color(0xFF8B97A2),
-                                      //             fontWeight: FontWeight.w500,
-                                      //           ),
-                                      //           hintText: 'Please Enter Duration',
-                                      //           hintStyle: FlutterFlowTheme
-                                      //               .bodyText2
-                                      //               .override(
-                                      //             fontFamily: 'Montserrat',
-                                      //             color: Color(0xFF8B97A2),
-                                      //             fontWeight: FontWeight.w500,
-                                      //           ),
-                                      //           enabledBorder:
-                                      //           UnderlineInputBorder(
-                                      //             borderSide: BorderSide(
-                                      //               color: Colors.transparent,
-                                      //               width: 1,
-                                      //             ),
-                                      //             borderRadius:
-                                      //             const BorderRadius.only(
-                                      //               topLeft:
-                                      //               Radius.circular(4.0),
-                                      //               topRight:
-                                      //               Radius.circular(4.0),
-                                      //             ),
-                                      //           ),
-                                      //           focusedBorder:
-                                      //           UnderlineInputBorder(
-                                      //             borderSide: BorderSide(
-                                      //               color: Colors.transparent,
-                                      //               width: 1,
-                                      //             ),
-                                      //             borderRadius:
-                                      //             const BorderRadius.only(
-                                      //               topLeft:
-                                      //               Radius.circular(4.0),
-                                      //               topRight:
-                                      //               Radius.circular(4.0),
-                                      //             ),
-                                      //           ),
-                                      //         ),
-                                      //         style: FlutterFlowTheme.bodyText2
-                                      //             .override(
-                                      //           fontFamily: 'Montserrat',
-                                      //           color: Color(0xFF8B97A2),
-                                      //           fontWeight: FontWeight.w500,
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // ),
                                       SizedBox(width: 20,),
 
                                       Expanded(
@@ -1439,6 +1372,7 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                                 list.add({
                                                   'courseId':CourseNameToId[course.text],
                                                   'duration':courseDuration.text,
+                                                  'monthOrYear':yearOrMonth,
                                                   'eligibility':eligibility.text,
                                                   'available':true,
                                                   'feeList':coursesList,
@@ -1602,7 +1536,7 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                         initialOption: eDuration,
                                         options: ['First Year', 'Second Year','Third Year']
                                             .toList(),
-                                        onChanged: (val) => setState(() => courseType = val),
+                                        onChanged: (val) => setState(() => yearOrMonth = val),
                                         width: 180,
                                         height: 50,
                                         textStyle: FlutterFlowTheme.bodyText1.override(
@@ -1620,80 +1554,7 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                         margin: EdgeInsetsDirectional.fromSTEB(12, 4, 12, 4),
                                         hidesUnderline: true,
                                       ),
-                                      // Expanded(
-                                      //   child: Container(
-                                      //     width: 330,
-                                      //     height: 60,
-                                      //     decoration: BoxDecoration(
-                                      //       color: Colors.white,
-                                      //       borderRadius:
-                                      //       BorderRadius.circular(8),
-                                      //       border: Border.all(
-                                      //         color: Color(0xFFE6E6E6),
-                                      //       ),
-                                      //     ),
-                                      //     child: Padding(
-                                      //       padding: EdgeInsets.fromLTRB(
-                                      //           16, 0, 0, 0),
-                                      //       child: TextFormField(
-                                      //         controller: eDuration,
-                                      //         obscureText: false,
-                                      //         decoration: InputDecoration(
-                                      //           labelText: 'Duration',
-                                      //           labelStyle: FlutterFlowTheme
-                                      //               .bodyText2
-                                      //               .override(
-                                      //             fontFamily: 'Montserrat',
-                                      //             color: Color(0xFF8B97A2),
-                                      //             fontWeight: FontWeight.w500,
-                                      //           ),
-                                      //           hintText: 'Please Enter Duration',
-                                      //           hintStyle: FlutterFlowTheme
-                                      //               .bodyText2
-                                      //               .override(
-                                      //             fontFamily: 'Montserrat',
-                                      //             color: Color(0xFF8B97A2),
-                                      //             fontWeight: FontWeight.w500,
-                                      //           ),
-                                      //           enabledBorder:
-                                      //           UnderlineInputBorder(
-                                      //             borderSide: BorderSide(
-                                      //               color: Colors.transparent,
-                                      //               width: 1,
-                                      //             ),
-                                      //             borderRadius:
-                                      //             const BorderRadius.only(
-                                      //               topLeft:
-                                      //               Radius.circular(4.0),
-                                      //               topRight:
-                                      //               Radius.circular(4.0),
-                                      //             ),
-                                      //           ),
-                                      //           focusedBorder:
-                                      //           UnderlineInputBorder(
-                                      //             borderSide: BorderSide(
-                                      //               color: Colors.transparent,
-                                      //               width: 1,
-                                      //             ),
-                                      //             borderRadius:
-                                      //             const BorderRadius.only(
-                                      //               topLeft:
-                                      //               Radius.circular(4.0),
-                                      //               topRight:
-                                      //               Radius.circular(4.0),
-                                      //             ),
-                                      //           ),
-                                      //         ),
-                                      //         style: FlutterFlowTheme.bodyText2
-                                      //             .override(
-                                      //           fontFamily: 'Montserrat',
-                                      //           color: Color(0xFF8B97A2),
-                                      //           fontWeight: FontWeight.w500,
-                                      //         ),
-                                      //       ),
-                                      //     ),
-                                      //   ),
-                                      // ),
+
                                       SizedBox(width: 20,),
 
                                       Expanded(
@@ -2473,6 +2334,7 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                               itemBuilder: (buildContext,int index){
 
                                 var courseMap= universityCourses[index];
+                                print(universityCourses[index]);
 
                                 return Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(16, 4, 16, 8),
@@ -2520,7 +2382,7 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                                       ),
                                                       SizedBox(width: 5,),
                                                       Text(
-                                                        ' ${CourseIdToName[courseMap['courseId']]}  ( ${courseMap['duration']} YEARS )',
+                                                        ' ${CourseIdToName[courseMap['courseId']]}  ( ${courseMap['duration']} ${courseMap['monthOrYear']} )',
                                                         style: FlutterFlowTheme.bodyText1.override(
                                                           fontFamily: 'Poppins',
                                                           color: Color(0xFF1D2429),
@@ -2595,9 +2457,9 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                                courseMapIndex=index;
                                                available=courseMap['available'];
                                                eCoursesList=courseMap['feeList'];
-                                               editCourseName=' '+CourseIdToName[courseMap['courseId']] +' ( ${courseMap['duration']} YEARS )';
+                                               editCourseName='${CourseIdToName[courseMap['courseId']]}  ( ${courseMap['duration']} ${courseMap['monthOrYear']} )';
 
-                                               print(edit);
+                                               print(editCourseName);
                                               setState(() {
 
                                               });

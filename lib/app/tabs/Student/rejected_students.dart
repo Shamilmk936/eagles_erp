@@ -335,6 +335,8 @@ class _RejectedStudentsState extends State<RejectedStudents> {
                       String course=CourseIdToName[studentList[index]['course']];
                       String university=UniversityIdToName[studentList[index]['university']];
                       String className=ClassIdToName[studentList[index]['classId']];
+                      String verificationStatus=studentList[index]['verified']==0?'Pending':
+                      studentList[index]['verified']==1?'Student':'Rejected';
 
                       return DataRow(
                         color: index.isOdd?
@@ -401,103 +403,12 @@ class _RejectedStudentsState extends State<RejectedStudents> {
                             fontWeight: FontWeight.bold,
                           )),),
                           DataCell(
-                            FFButtonWidget(
-                              onPressed: () async {
-
-                                await  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(24.0)
-                                      ),
-                                      title: Text('Change Access ?'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: (){
-                                            Navigator.of(context, rootNavigator: true).pop(false);
-                                          },
-                                          child: Text(
-                                              'Cancel',
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black
-                                              )
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: (){
-
-                                            FirebaseFirestore.instance
-                                                .collection('candidates')
-                                                .doc(studentList[index]['studentId'])
-                                                .update({
-                                              'verified':0,
-                                            });
-                                            setState(() {
-
-                                            });
-
-                                            Navigator.of(context, rootNavigator: true).pop(false);
-                                          },
-                                          child: Text(
-                                              'Pending',
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.red
-                                              )
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: (){
-                                            FirebaseFirestore.instance
-                                                .collection('candidates')
-                                                .doc(studentList[index]['studentId'])
-                                                .update({
-                                              'verified':1,
-                                            });
-                                            setState(() {
-
-                                            });
-                                            Navigator.of(context, rootNavigator: true).pop(false);
-                                          },
-                                          child: Text(
-                                              'Register',
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.blue
-                                              )
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                );
-                                setState(() {
-
-                                });
-                              },
-                              text: studentList[index]['verified'] == 0
-                                  ? 'Pending'
-                                  : 'Rejected',
-                              options: FFButtonOptions(
-                                width: 80,
-                                height: 30,
-                                color: Colors.white,
-                                textStyle: FlutterFlowTheme.subtitle2
-                                    .override(
-                                    fontFamily: 'Poppins',
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold),
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                  width: 1,
-                                ),
-                                borderRadius: 8,
-                              ),
-                            ),
+                            Text(verificationStatus??'',style: FlutterFlowTheme.bodyText2.override(
+                              fontFamily: 'Lexend Deca',
+                              color: Colors.black,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            )),
                           ),
                           DataCell(  Row(
                             children: [
@@ -505,7 +416,7 @@ class _RejectedStudentsState extends State<RejectedStudents> {
                                 onPressed: () {
 
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=>StudentSinglePageView(
-                                    id: studentList[index].id,
+                                    id: studentList[index]['studentId'],
                                   )));
 
                                 },

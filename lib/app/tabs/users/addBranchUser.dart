@@ -62,6 +62,7 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
   getAdminUsers(){
     FirebaseFirestore.instance
         .collection('admin_users')
+    .where('verified',isEqualTo: true)
         .limit(limit)
         .snapshots()
         .listen((event) {
@@ -90,6 +91,7 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
     } else {
       FirebaseFirestore.instance
           .collection('admin_users')
+          .where('verified',isEqualTo: true)
           .startAfterDocument(lastDoc)
           .limit(limit)
           .snapshots()
@@ -120,6 +122,7 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
     } else {
       FirebaseFirestore.instance
           .collection('admin_users')
+          .where('verified',isEqualTo: true)
           .startAfterDocument(lastDocuments[pageIndex - 1])
           .limit(limit)
           .snapshots()
@@ -592,7 +595,7 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
 
                                 DocumentSnapshot doc= await FirebaseFirestore.instance
                                     .collection('settings').doc(currentbranchId).get();
-                                
+
                                 int uId=doc.get('userId');
                                 print(uId);
 
@@ -601,9 +604,9 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
                                     password.text != '' &&
                                     phone.text != '' &&
                                     userName.text != '' &&
-                                    userSelectValue != '' &&
-                                    currentUserRole=='coordinator' &&
-                                    currentUserRole=='Super Admin' ) {
+                                    userSelectValue !=null
+
+                                ) {
 
                                   FirebaseFirestore.instance
                                       .collection('admin_users')
@@ -1284,6 +1287,8 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
 
 
                                           if(userList[index]['verified']==true){
+
+                                            print(userList[index]['uid']);
                                             print('sssss');
 
                                             FirebaseFirestore.instance
@@ -1299,8 +1304,12 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
                                                 .update({
                                               'staff': FieldValue.arrayRemove([userList[index]['email']]),
                                             });
+                                            setState(() {
+
+                                            });
 
                                           }else{
+
                                             print('nnnnn');
                                             FirebaseFirestore.instance
                                                 .collection('admin_users')
@@ -1316,6 +1325,9 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
                                               'staff': FieldValue.arrayUnion([userList[index]['email']]),
                                             });
 
+                                            setState(() {
+
+                                            });
                                           }
 
                                         }

@@ -1753,9 +1753,10 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 44),
                 child: FFButtonWidget(
                   onPressed: () async {
-                    if(firstName.text!=''&&lastName.text!=''&&mobile.text!=''&&email.text!=''&&uploadedFileUrl!=''&&
-                        dob!=''&& address.text!=''&&place.text!=''&&selectedClass!=''&&selectedIntake!='' &&selectedClass!=null&&selectedClass!=''&&
-                        admissionFee.text!=''&&universityFee!=''&&data.length==uploadDocument.length){
+                    if(firstName.text!=''&&lastName.text!=''&&mobile.text!=''&&email.text!=''&&
+                        dob!=''&& address.text!=''&&place.text!=''&&selectedClass!=''&&selectedIntake!=''
+                        &&selectedClass!=null&&selectedClass!=''&& admissionFee.text!=''&&universityFee!=''
+                        &&data.length==uploadDocument.length){
 
                       bool pressed= await alert(context, 'Register As Student...');
                       if(pressed){
@@ -1786,7 +1787,7 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                             'amount': un+ad +tu+cn,
                             'modeOfPayment':radioval,
                             'userId':currentUserUid,
-                            'razorPayId':'Admin'
+                            'paymentId':''
                           });
 
 
@@ -1914,8 +1915,7 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                       address.text==''?showUploadMessage(context, 'Please Enter Address'):
                       place.text==''?showUploadMessage(context, 'Please Enter Place'):
                       radioval==''?showUploadMessage(context, 'Please select payment method'):
-                      data.length!=uploadDocument.length?showUploadMessage(context, 'Please upload all documents'):
-                      showUploadMessage(context, 'Please upload image');
+                      showUploadMessage(context, 'Please upload all documents');
 
                     }
 

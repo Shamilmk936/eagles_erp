@@ -1,5 +1,5 @@
 
- // import 'dart:html' as html;
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -227,6 +227,95 @@ print('ccccccccccc');
   bool cash=false;
   bool bank=false;
   String radioval='';
+
+
+  void rejectAndRefund(
+      String course,
+      List emailList,
+      String name,
+      String intake
+      ) async {
+
+    FirebaseFirestore.instance.collection('mail')
+        .add({
+      'date':DateTime.now(),
+      'html':
+      '<body><p>Helo $name</p>'
+          '<p></p>'
+          '<p>Your admission for <var>$course</var> for the academic year <var>$intake</var> with Live To Smile Digital Academy is Rejected.</p>'
+          '<p>Amount will be refunded with in 7 days</p>'
+          '<p></p>'
+          '<p></p>'
+          '<p></p>'
+          '<p>Coordinator-<var>$course</var></p>'
+          '<p></p>'
+          '</body>',
+      'emailList':emailList,
+      'status':'Admission request rejected'
+    });
+
+    print('eeee');
+  }
+
+  void reject(
+      String course,
+      List emailList,
+      String name,
+      String intake
+      ) async {
+
+    FirebaseFirestore.instance.collection('mail')
+        .add({
+      'date':DateTime.now(),
+      'html':
+      '<body><p>Helo $name</p>'
+          '<p></p>'
+          '<p>Your admission for <var>$course</var> for the academic year <var>$intake</var> with Live To Smile Digital Academy is Rejected.</p>'
+          '<p>Request again</p>'
+          '<p></p>'
+          '<p></p>'
+          '<p></p>'
+          '<p>Coordinator-<var>$course</var></p>'
+          '<p></p>'
+          '</body>',
+      'emailList':emailList,
+      'status':'Admission request rejected'
+    });
+
+    print('eeee');
+  }
+
+
+  // REFUND
+
+  Future<void> generate_ODID(String id) async {
+
+    print(id);
+
+    final client = HttpClient();
+    final request =
+    await client.postUrl(Uri.parse('https://api.razorpay.com/v1/payments/$id/refund'));
+    request.headers.set(
+        HttpHeaders.contentTypeHeader, "application/json; charset=UTF-8");
+    print(2);
+    String basicAuth = 'Basic ' +
+        base64Encode(utf8.encode(
+            '${'rzp_live_C190kQus1hA6p6'}:${'OUikvDm9CsPAJq6LjYaGCIOa'}'));
+    print(3);
+    request.headers.set(HttpHeaders.authorizationHeader, basicAuth);
+
+
+    // request.add(utf8.encode(json.encode(orderOptions)));
+    print(4);
+    final response = await request.close();
+
+    print(5);
+    response.transform(utf8.decoder).listen((contents) async {
+      print(6);
+      print('Response : '+contents);
+    });
+
+  }
 
 
   void paymentSuccessEmail(
@@ -2995,7 +3084,7 @@ print('ccccccccccc');
                                                         ),
                                                       )),
                                                       DataCell(SelectableText(
-                                                        tuitionFee[index]['razorPayId']??' ',
+                                                        tuitionFee[index]['paymentId']??' ',
                                                         style: FlutterFlowTheme.bodyText2.override(
                                                           fontFamily: 'Lexend Deca',
                                                           color: Colors.black,
@@ -3199,7 +3288,7 @@ print('ccccccccccc');
                                                             'amount': double.tryParse(pay.text),
                                                             'modeOfPayment':radioval,
                                                             'userId':currentUserUid,
-                                                            'razorPayId':'Admin'
+                                                            'paymentId':''
                                                           });
                                                           currentTotal[index]['tuitionFee']=currentYrTu;
                                                           print(currentTotal[index]['tuitionFee']);
@@ -3626,130 +3715,330 @@ print('ccccccccccc');
                 //DOCUMENTS
                 Padding(
                   padding: const EdgeInsets.only(top: 20,bottom: 20,left: 30,right: 30),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width*0.8,
-                    child:DataTable(
-                      horizontalMargin: 10,
-                      columnSpacing: 20,
-                      columns: [
-                        DataColumn(
-                          label: Text(
-                            "Document Name",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width*0.8,
+                        child:DataTable(
+                          horizontalMargin: 10,
+                          columnSpacing: 20,
+                          columns: [
+                            DataColumn(
+                              label: Text(
+                                "Document Name",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
+                            DataColumn(
+                              label:  Text(
+                                "upload",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
+                            DataColumn(
+                              label:  Text(
+                                " ",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
+
+                          ],
+                          rows: List.generate(
+                            uploadDocument.length,
+                                (index) {
+                              var docName = uploadDocument[index];
+                              print(studentDocument.keys.toList());
+
+
+                              return DataRow(
+                                color: index.isOdd
+                                    ? MaterialStateProperty.all(Colors
+                                    .blueGrey.shade50
+                                    .withOpacity(0.7))
+                                    : MaterialStateProperty.all(
+                                    Colors.blueGrey.shade50),
+                                cells: [
+                                  DataCell(SelectableText(
+                                    docName,
+                                    style: FlutterFlowTheme.bodyText2.override(
+                                      fontFamily: 'Lexend Deca',
+                                      color: Colors.black,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )),
+                                  DataCell( Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 8, 0),
+                                    child: FFButtonWidget(
+                                      onPressed: ()  async {
+                                        bool pressed=await alert(context, 'please upload ${docName}');
+                                        if(pressed){
+                                          selectFileToMessage(docName.toUpperCase());
+                                          setState(() {
+
+                                          });
+                                        }
+                                      },
+                                      text: studentDocument.keys.toList().contains(docName.toString().toUpperCase())?'Edit':'Upload'
+                                      ,options: FFButtonOptions(
+                                      width: 100,
+                                      height: 40,
+                                      color: studentDocument.keys.toList().contains(docName.toString().toUpperCase())? Color(0xFF4B39EF):Colors.teal,
+                                      textStyle: FlutterFlowTheme
+                                          .subtitle2
+                                          .override(
+                                        fontFamily: 'Poppins',
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      elevation: 2,
+                                      borderSide: BorderSide(
+                                        color: Colors.transparent,
+                                        width: 1,
+                                      ),
+                                      borderRadius: 50,
+                                    ),
+                                    ),
+                                  )),
+                                  studentDocument.keys.toList().contains(docName.toString().toUpperCase())?
+                                  DataCell( Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 8, 0),
+                                    child: FFButtonWidget(
+                                      onPressed: ()  async {
+                                        launchURL(studentDocument[docName.toString().toUpperCase()]);
+                                      },
+                                      icon: Icon(Icons.download),
+                                      text: 'Download'
+                                      ,options: FFButtonOptions(
+                                      width: 150,
+                                      height: 40,
+                                      color: Colors.grey,
+                                      textStyle: FlutterFlowTheme
+                                          .subtitle2
+                                          .override(
+                                        fontFamily: 'Poppins',
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      elevation: 2,
+                                      borderSide: BorderSide(
+                                        color: Colors.transparent,
+                                        width: 1,
+                                      ),
+                                      borderRadius: 50,
+                                    ),
+                                    ),
+                                  ))
+                                  :DataCell(Container()),
+
+                                ],
+                              );
+                            },
                           ),
                         ),
-                        DataColumn(
-                          label:  Text(
-                            "upload",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
-                          ),
-                        ),
-                        DataColumn(
-                          label:  Text(
-                            " ",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 15),
-                          ),
-                        ),
-
-                      ],
-                      rows: List.generate(
-                        uploadDocument.length,
-                            (index) {
-                          var docName = uploadDocument[index];
-                          print(studentDocument.keys.toList());
-
-
-                          return DataRow(
-                            color: index.isOdd
-                                ? MaterialStateProperty.all(Colors
-                                .blueGrey.shade50
-                                .withOpacity(0.7))
-                                : MaterialStateProperty.all(
-                                Colors.blueGrey.shade50),
-                            cells: [
-                              DataCell(SelectableText(
-                                docName,
-                                style: FlutterFlowTheme.bodyText2.override(
-                                  fontFamily: 'Lexend Deca',
-                                  color: Colors.black,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              )),
-                              DataCell( Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 8, 0),
-                                child: FFButtonWidget(
-                                  onPressed: ()  async {
-                                    bool pressed=await alert(context, 'please upload ${docName}');
-                                    if(pressed){
-                                      selectFileToMessage(docName.toUpperCase());
-                                      setState(() {
-
-                                      });
-                                    }
-                                  },
-                                  text: studentDocument.keys.toList().contains(docName.toString().toUpperCase())?'Edit':'Upload'
-                                  ,options: FFButtonOptions(
-                                  width: 100,
-                                  height: 40,
-                                  color: studentDocument.keys.toList().contains(docName.toString().toUpperCase())? Color(0xFF4B39EF):Colors.teal,
-                                  textStyle: FlutterFlowTheme
-                                      .subtitle2
-                                      .override(
-                                    fontFamily: 'Poppins',
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  elevation: 2,
-                                  borderSide: BorderSide(
-                                    color: Colors.transparent,
-                                    width: 1,
-                                  ),
-                                  borderRadius: 50,
-                                ),
-                                ),
-                              )),
-                              studentDocument.keys.toList().contains(docName.toString().toUpperCase())?
-                              DataCell( Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(0, 0, 8, 0),
-                                child: FFButtonWidget(
-                                  onPressed: ()  async {
-                                    launchURL(studentDocument[docName.toString().toUpperCase()]);
-                                  },
-                                  icon: Icon(Icons.download),
-                                  text: 'Download'
-                                  ,options: FFButtonOptions(
-                                  width: 150,
-                                  height: 40,
-                                  color: Colors.grey,
-                                  textStyle: FlutterFlowTheme
-                                      .subtitle2
-                                      .override(
-                                    fontFamily: 'Poppins',
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  elevation: 2,
-                                  borderSide: BorderSide(
-                                    color: Colors.transparent,
-                                    width: 1,
-                                  ),
-                                  borderRadius: 50,
-                                ),
-                                ),
-                              ))
-                              :DataCell(Container()),
-
-                            ],
-                          );
-                        },
                       ),
-                    ),
+
+                      Padding(
+                          padding: EdgeInsets.all(15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+
+                              student['verified']==0||student['verified']==2?
+                              InkWell(
+                                onTap:() async {
+
+                                  await  showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(24.0)
+                                    ),
+                                    title: Text('Reject Student ?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: (){
+                                          Navigator.of(context, rootNavigator: true).pop(false);
+                                        },
+                                        child: Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black
+                                            )
+                                        ),
+                                      ),
+
+                                      TextButton(
+                                        onPressed: (){
+                                          student.reference
+                                              .update({
+                                            'verified':1,
+                                          });
+                                          setState(() {
+
+                                          });
+                                          Navigator.of(context, rootNavigator: true).pop(false);
+                                        },
+                                        child: Text(
+                                            'Verify',
+                                            style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue
+                                            )
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                  );
+
+                                  },
+                                child: Container(
+                                  height: 40,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Colors.blue
+                                  ),
+                                  child: Center(
+                                      child: Text('Verify Student'
+                                        ,style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white
+                                      ),)
+                                  ),
+                                ),
+                              )
+                                  :Container(),
+
+                              SizedBox(width: 20,),
+
+                              student['verified']==0?
+                              InkWell(
+                                onTap: () async {
+
+                                  String course=CourseIdToName[student['course']];
+                                  String intake=InTakeIdToName[student['inTake']];
+                                  String name='${student['name']} ${student['lastName']}';
+                                  List emailList=[];
+                                  emailList.add(student['email']);
+
+
+                                  await  showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(24.0)
+                                    ),
+                                    title: Text('Reject Student ?'),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: (){
+                                          Navigator.of(context, rootNavigator: true).pop(false);
+                                        },
+                                        child: Text(
+                                            'Cancel',
+                                            style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black
+                                            )
+                                        ),
+                                      ),
+
+                                      TextButton(
+                                        onPressed: (){
+                                          student.reference
+                                              .update({
+                                            'verified':2,
+                                          });
+                                          setState(() {
+
+                                          });
+                                          reject(course,emailList,name,intake);
+
+                                          Navigator.of(context, rootNavigator: true).pop(false);
+                                        },
+                                        child: Text(
+                                            'Reject',
+                                            style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue
+                                            )
+                                        ),
+                                      ),
+
+                                      TextButton(
+                                        onPressed: (){
+
+                                          student.reference
+                                              .update({
+                                            'verified':2,
+                                          });
+
+                                          String paymentId='';
+                                          for(var data in student['feeDetails']){
+                                            for(var tu in data['tuitionFee']){
+                                              print(data['tuitionFee'][0]['paymentId']);
+                                              paymentId=data['tuitionFee'][0]['paymentId'];
+                                            }
+                                          }
+
+                                          rejectAndRefund(course,emailList,name,intake);
+                                          generate_ODID(paymentId);
+
+                                          Navigator.of(context, rootNavigator: true).pop(false);
+
+                                          setState(() {
+
+                                          });
+
+                                          Navigator.of(context, rootNavigator: true).pop(false);
+                                        },
+                                        child: Text(
+                                            'Reject and Refund',
+                                            style: TextStyle(
+                                                fontSize: 18.0,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue
+                                            )
+                                        ),
+                                      )
+                                    ],
+                                  )
+                                  );
+
+                                },
+                                child: Container(
+                                  height: 40,
+                                  width: 120,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.red
+                                  ),
+                                  child: Center(
+                                      child: Text('Reject Student'
+                                        ,style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white
+                                      ),)
+                                  ),
+                                ),
+                              )
+                                  :Container(),
+                            ],
+                        ),
+                      )
+
+                    ],
                   ),
                 )
 

@@ -348,7 +348,6 @@ List placesList=[];
                                 child: Container(
                                   width: 330,
                                   height: 60,
-
                                   decoration: BoxDecoration(
                                     color: Colors.white,
                                     boxShadow: [

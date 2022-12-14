@@ -132,33 +132,6 @@ class _StudentRequestState extends State<StudentRequest> {
     print(studentList.length.toString()+'          nnn');
   }
 
-  void reject_studentRequest(
-      String course,
-      List emailList,
-      String name,
-      String intake
-      ) async {
-
-    FirebaseFirestore.instance.collection('mail')
-        .add({
-      'date':DateTime.now(),
-      'html':
-      '<body><p>Helo $name</p>'
-          '<p></p>'
-          '<p>Your admission for <var>$course</var> for the academic year <var>$intake</var> with Live To Smile Digital Academy is Rejected.</p>'
-          '<p>Amount will be refunded with in 5 days</p>'
-          '<p></p>'
-          '<p></p>'
-          '<p>Better luck next time</p>'
-          '<p>Coordinator-<var>$course</var></p>'
-          '<p></p>'
-          '</body>',
-      'emailList':emailList,
-      'status':'Admission request rejected'
-    });
-
-    print('eeee');
-  }
 
   @override
   void initState() {
@@ -367,6 +340,8 @@ class _StudentRequestState extends State<StudentRequest> {
                       String course=CourseIdToName[studentList[index]['course']];
                       String university=UniversityIdToName[studentList[index]['university']];
                       String className=ClassIdToName[studentList[index]['classId']];
+                      String verificationStatus=studentList[index]['verified']==0?'Pending':
+                      studentList[index]['verified']==1?'Student':'Rejected';
 
                       return DataRow(
                         color: index.isOdd?
@@ -433,108 +408,12 @@ class _StudentRequestState extends State<StudentRequest> {
                             fontWeight: FontWeight.bold,
                           )),),
                           DataCell(
-                            FFButtonWidget(
-                              onPressed: () async {
-
-                              await  showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(24.0)
-                                      ),
-                                      title: Text('Change Access ?'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          onPressed: (){
-                                            Navigator.of(context, rootNavigator: true).pop(false);
-                                          },
-                                          child: Text(
-                                              'Cancel',
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black
-                                              )
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: (){
-
-                                            FirebaseFirestore.instance
-                                                .collection('candidates')
-                                            .doc(studentList[index]['studentId'])
-                                            .update({
-                                              'verified':2,
-                                            });
-                                            setState(() {
-
-                                            });
-
-                                            String course=CourseIdToName[studentList[index]['course']];
-                                            String intake=InTakeIdToName[studentList[index]['inTake']];
-                                            List emailList=[];
-                                            emailList.add(studentList[index]['email']);
-                                            reject_studentRequest(course,emailList,name,intake);
-
-                                            Navigator.of(context, rootNavigator: true).pop(false);
-                                          },
-                                          child: Text(
-                                              'Reject',
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.red
-                                              )
-                                          ),
-                                        ),
-                                        TextButton(
-                                          onPressed: (){
-                                            FirebaseFirestore.instance
-                                                .collection('candidates')
-                                                .doc(studentList[index]['studentId'])
-                                                .update({
-                                              'verified':1,
-                                            });
-                                            setState(() {
-
-                                            });
-                                            Navigator.of(context, rootNavigator: true).pop(false);
-                                          },
-                                          child: Text(
-                                              'Accept',
-                                              style: TextStyle(
-                                                  fontSize: 18.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.blue
-                                              )
-                                          ),
-                                        )
-                                      ],
-                                    )
-                                );
-                              setState(() {
-
-                              });
-                              },
-                              text: studentList[index]['verified'] == 0
-                                  ? 'Pending'
-                                  : 'Blocked',
-                              options: FFButtonOptions(
-                                width: 80,
-                                height: 30,
-                                color: Colors.white,
-                                textStyle: FlutterFlowTheme.subtitle2
-                                    .override(
-                                    fontFamily: 'Poppins',
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold),
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                  width: 1,
-                                ),
-                                borderRadius: 8,
-                              ),
+                            Text(verificationStatus??'',style: FlutterFlowTheme.bodyText2.override(
+                              fontFamily: 'Lexend Deca',
+                              color: Colors.black,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            )
                             ),
                           ),
                           DataCell(  Row(
