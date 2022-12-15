@@ -50,6 +50,7 @@ class _AddTutorState extends State<AddTutor> {
   getTutor(){
     FirebaseFirestore.instance
         .collection('tutor')
+        .where('available',isEqualTo: true)
         .limit(limit)
         .snapshots()
         .listen((event) {
@@ -78,6 +79,7 @@ class _AddTutorState extends State<AddTutor> {
     } else {
       FirebaseFirestore.instance
           .collection('tutor')
+          .where('available',isEqualTo: true)
           .startAfterDocument(lastDoc)
           .limit(limit)
           .snapshots()
@@ -108,6 +110,7 @@ class _AddTutorState extends State<AddTutor> {
     } else {
       FirebaseFirestore.instance
           .collection('tutor')
+          .where('available',isEqualTo: true)
           .startAfterDocument(lastDocuments[pageIndex - 1])
           .limit(limit)
           .snapshots()
@@ -1430,7 +1433,7 @@ class _AddTutorState extends State<AddTutor> {
 
                                   FirebaseFirestore.instance
                                       .collection('tutor')
-                                      .doc('U$docId')
+                                      .doc(docId)
                                       .set({
                                     'name':ename.text,
                                     'email':eemail.text,
@@ -1438,14 +1441,15 @@ class _AddTutorState extends State<AddTutor> {
                                     'department':edepartment.text,
                                     'userName':euserName.text,
                                     'password':epassword.text,
-                                    'tutorId':'U$docId',
+                                    'tutorId': docId,
                                     'available':true,
                                     'image':euploadedFileUrl,
+
                                   });
 
                                   FirebaseFirestore.instance
                                       .collection('admin_users')
-                                      .doc('U$docId')
+                                      .doc(docId)
                                       .set({
                                     'department':edepartment.text,
                                     'display_name': ename.text,
@@ -1456,9 +1460,8 @@ class _AddTutorState extends State<AddTutor> {
                                     'photo_url': euploadedFileUrl,
                                     'userName': euserName.text,
                                     'verified': true,
-                                    'uid':'U$docId',
+                                    'uid':docId,
                                   });
-
 
                                   name.text='';
                                   email.text='';
@@ -1467,7 +1470,6 @@ class _AddTutorState extends State<AddTutor> {
                                   userName.text='';
                                   password.text='';
                                   uploadedFileUrl='';
-
 
                                   showUploadMessage(context, 'Tutor details edited scuccessfully');
                                 }else{
@@ -1549,7 +1551,7 @@ class _AddTutorState extends State<AddTutor> {
                             ),
                             DataColumn(
                               label: Text(
-                                "Access",
+                                " ",
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 11),
                               ),
@@ -1619,41 +1621,6 @@ class _AddTutorState extends State<AddTutor> {
                                   DataCell(
                                     FFButtonWidget(
                                       onPressed: () async {
-
-                                        bool pressed = await alert(context, 'Do you want to change access?');
-                                        if(pressed){
-                                          FirebaseFirestore.instance
-                                          .collection('')
-                                          .doc(tutorList[index]['tutorId'])
-                                              .update({
-                                            'available': !tutorList[index]['available'],
-                                          });
-
-                                        }
-
-                                      },
-                                      text: tutorList[index]['available']==true?'Veryfied':'Blocked',
-                                      options: FFButtonOptions(
-                                        width: 80,
-                                        height: 30,
-                                        color: Colors.white,
-                                        textStyle: FlutterFlowTheme.subtitle2.override(
-                                            fontFamily: 'Poppins',
-                                            color: tutorList[index]['available']==true?Colors.teal:Colors.red,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                        borderSide: BorderSide(
-                                          color: Colors.transparent,
-                                          width: 1,
-                                        ),
-                                        borderRadius: 8,
-                                      ),
-                                    ),
-                                    ),
-                                  DataCell(
-                                    FFButtonWidget(
-                                      onPressed: () async {
                                         if(currentUserRole=='Super Admin' || currentUserRole=='coordinator'){
 
                                           bool pressed = await alert(context, 'Do you want to edit details?');
@@ -1698,8 +1665,53 @@ class _AddTutorState extends State<AddTutor> {
                                         borderRadius: 8,
                                       ),
                                     ),
-                                    )
+                                    ),
+                                  DataCell(
+                                    FFButtonWidget(
+                                      onPressed: () async {
 
+                                        bool pressed = await alert(context, 'Do you want to delete?');
+                                        if(pressed){
+                                          FirebaseFirestore.instance
+                                              .collection('tutor')
+                                              .doc(tutorList[index]['tutorId'])
+                                              .update({
+                                            'available': !tutorList[index]['available'],
+                                          });
+
+                                          FirebaseFirestore.instance
+                                              .collection('admin_users')
+                                              .doc(tutorList[index]['tutorId'])
+                                              .update({
+                                            'verified': !tutorList[index]['available'],
+                                          });
+
+                                          setState(() {
+
+                                          });
+
+                                        }
+
+                                      },
+                                      text: 'Delete',
+                                      options: FFButtonOptions(
+                                        width: 80,
+                                        height: 30,
+                                        color: Colors.white,
+                                        textStyle: FlutterFlowTheme.subtitle2.override(
+                                            fontFamily: 'Poppins',
+                                            color: tutorList[index]['available']==true?Colors.teal:Colors.red,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                        borderSide: BorderSide(
+                                          color: Colors.transparent,
+                                          width: 1,
+                                        ),
+                                        borderRadius: 8,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               );
                             },

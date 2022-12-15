@@ -11,8 +11,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../flutter_flow/flutter_flow_widgets.dart';
 import '../../../../flutter_flow/upload_media.dart';
 import '../../../pages/home_page/home.dart';
-import 'AddCourses.dart';
-import 'AddNewCourse.dart';
+// import 'AddCourses.dart';
+// import 'AddNewCourse.dart';
 import 'EditUniversityDetails.dart';
 List editPlaces=[];
 
@@ -225,8 +225,6 @@ DocumentSnapshot data;
 
 
                                                         showDialog(context: context, builder: (buildContext){
-
-
 
                                                           return EditUniversityDetails(
                                                             id: data.id,
@@ -1002,21 +1000,21 @@ DocumentSnapshot data;
                                            ),
                                            child: InkWell(
                                              onTap: () async {
-
-                                               String name= await     showDialog(context: context,
-                                                   builder: (buildContext){
-                                                     return AddNewCourse();
-                                                   });
-                                               if(name!=null){
-                                                 if(name.contains(name)){
-                                                   course.text=name;
-                                                 }
-                                                 setState(() {
-
-                                                 });
-                                               }else{
-                                                 showUploadMessage(context, 'Section was Cancelled...');
-                                               }
+                                               //
+                                               // String name= await     showDialog(context: context,
+                                               //     builder: (buildContext){
+                                               //       return AddNewCourse();
+                                               //     });
+                                               // if(name!=null){
+                                               //   if(name.contains(name)){
+                                               //     course.text=name;
+                                               //   }
+                                               //   setState(() {
+                                               //
+                                               //   });
+                                               // }else{
+                                               //   showUploadMessage(context, 'Section was Cancelled...');
+                                               // }
                                              },
                                              child: Container(
                                                height: 100,

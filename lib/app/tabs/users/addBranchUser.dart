@@ -62,7 +62,8 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
   getAdminUsers(){
     FirebaseFirestore.instance
         .collection('admin_users')
-    .where('verified',isEqualTo: true)
+        .where('verified',isEqualTo: true)
+        .where('role',isNotEqualTo: 'tutor')
         .limit(limit)
         .snapshots()
         .listen((event) {
@@ -92,6 +93,7 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
       FirebaseFirestore.instance
           .collection('admin_users')
           .where('verified',isEqualTo: true)
+          .where('role',isNotEqualTo: 'tutor')
           .startAfterDocument(lastDoc)
           .limit(limit)
           .snapshots()
@@ -123,6 +125,7 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
       FirebaseFirestore.instance
           .collection('admin_users')
           .where('verified',isEqualTo: true)
+          .where('role',isNotEqualTo: 'tutor')
           .startAfterDocument(lastDocuments[pageIndex - 1])
           .limit(limit)
           .snapshots()

@@ -1,19 +1,17 @@
-import 'dart:math';
+import 'dart:developer';
+// import 'dart:math';
 
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:smile_erp/app/tabs/InTake/InTake.dart';
-import 'package:smile_erp/auth/auth_util.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:flutter/services.dart';
 import 'package:smile_erp/backend/backend.dart';
 import '../../../Login/login.dart';
-import '../../../auth/auth_util.dart';
 import '../../../flutter_flow/flutter_flow_drop_down.dart';
 import '../../../flutter_flow/flutter_flow_icon_button.dart';
 import '../../../flutter_flow/flutter_flow_theme.dart';
-import '../../../flutter_flow/flutter_flow_util.dart';
 import '../../../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import '../../../flutter_flow/upload_media.dart';
@@ -35,6 +33,8 @@ class RegistrationFormWidget extends StatefulWidget {
   final String universityId;
   final String selectedBranch;
   final String courses;
+  final String phnCode;
+  final String cntyCode;
 
   const RegistrationFormWidget({Key key,
     this.name,
@@ -49,6 +49,8 @@ class RegistrationFormWidget extends StatefulWidget {
     this.careOfNo,
     this.selectedBranch,
     this.courses,
+    this.phnCode,
+    this.cntyCode
   }) : super(key: key);
 
   @override
@@ -72,6 +74,9 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
   TextEditingController tuitionFee;
   TextEditingController convacationFee;
   TextEditingController scholarship;
+
+  String phoneCode='+91';
+  String countryCode='IN';
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -289,6 +294,13 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
     tuitionFee = TextEditingController();
     convacationFee = TextEditingController();
     scholarship = TextEditingController();
+    if(widget.phnCode!=''&&widget.phnCode!=null){
+      phoneCode=widget.phnCode;
+    }
+    if(widget.cntyCode!=''&&widget.cntyCode!=null){
+      countryCode=widget.cntyCode;
+    }
+
 
   }
 
@@ -598,91 +610,32 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                       ),
                     ),
                     SizedBox(width: 30,),
+
                     Expanded(
                       child: Container(
                         width: 330,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius:
-                          BorderRadius.circular(8),
-                          border: Border.all(
-                            color: Color(0xFFE6E6E6),
-                          ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              16, 0, 0, 0),
-                          child: TextFormField(
-                            inputFormatters: <TextInputFormatter>[
-                              LengthLimitingTextInputFormatter(10)
-                            ],
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            keyboardType: TextInputType.phone,
-                            validator: (email) {
-                              if (email.isEmpty) {
-                                return "Enter your phone number";
-                              } else if (!RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)')
-                                  .hasMatch(email)) {
-                                return "phone number is not valid";
-                              } else {
-                                return null;
-                              }
-                            },
-                            controller: mobile,
-                            obscureText: false,
-                            decoration: InputDecoration(
-                              labelText: 'Mobile',
-                              labelStyle: FlutterFlowTheme
-                                  .bodyText2
-                                  .override(
-                                fontFamily: 'Montserrat',
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              hintText: 'Please Enter Mobile',
-                              hintStyle: FlutterFlowTheme
-                                  .bodyText2
-                                  .override(
-                                fontFamily: 'Montserrat',
-                                color: Colors.black,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              enabledBorder:
-                              UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                  width: 1,
-                                ),
-                                borderRadius:
-                                const BorderRadius.only(
-                                  topLeft:
-                                  Radius.circular(4.0),
-                                  topRight:
-                                  Radius.circular(4.0),
-                                ),
-                              ),
-                              focusedBorder:
-                              UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                  width: 1,
-                                ),
-                                borderRadius:
-                                const BorderRadius.only(
-                                  topLeft:
-                                  Radius.circular(4.0),
-                                  topRight:
-                                  Radius.circular(4.0),
-                                ),
-                              ),
-                            ),
-                            style: FlutterFlowTheme.bodyText2
-                                .override(
-                              fontFamily: 'Montserrat',
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
+                        // color: Colors.white,
+                        child: IntlPhoneField(
+                          controller: mobile,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(color: Color(0xFFE6E6E6),),
                             ),
                           ),
+                          initialCountryCode: countryCode,
+                          onChanged: (phone) {
+                            phoneCode=phone.countryCode;
+                            countryCode=phone.countryISOCode;
+                            log(phoneCode);
+                            print(countryCode+'**********');
+                            setState(() {
+
+                            });
+
+                          },
                         ),
                       ),
                     ),
@@ -1753,6 +1706,9 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 44),
                 child: FFButtonWidget(
                   onPressed: () async {
+
+                    print(phoneCode);
+
                     if(firstName.text!=''&&lastName.text!=''&&mobile.text!=''&&email.text!=''&&
                         dob!=''&& address.text!=''&&place.text!=''&&selectedClass!=''&&selectedIntake!=''
                         &&selectedClass!=null&&selectedClass!=''&& admissionFee.text!=''&&universityFee!=''
@@ -1830,8 +1786,8 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                           'name':firstName.text,
                           'lastName':lastName.text,
                           'mobile':mobile.text,
-                          'countryCode':'IN',
-                          'phoneCode':'+91',
+                          'countryCode':countryCode,
+                          'phoneCode':phoneCode,
                           'email':email.text,
                           'dob':dob,
                           'place':place.text,

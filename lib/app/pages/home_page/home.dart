@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:smile_erp/app/app_widget.dart';
-import 'package:smile_erp/app/tabs/University/AddCourse.dart';
+import 'package:smile_erp/app/tabs/Settings/AddCourse.dart';
 import 'package:smile_erp/app/tabs/Enquiry/AddEnquiry.dart';
 import 'package:smile_erp/auth/auth_util.dart';
 import 'package:multiple_select/Item.dart';
@@ -195,23 +195,27 @@ Map<String,dynamic>tutorNameToId={};
 Map<String,dynamic>tutorIdToName={};
 getTutors() async {
   QuerySnapshot data1 =
-  await FirebaseFirestore.instance.collection("tutor")
-      .where('available',isEqualTo: true)
+  await FirebaseFirestore.instance
+      .collection("tutor")
       .get();
   for (var tutor in data1.docs) {
+    print(tutor.id+'dddddddddddd');
     tutorMap[tutor.id]=tutor.data();
     tutorNameToId[tutor.get('name')]=tutor.id;
     tutorIdToName[tutor.id]=tutor.get('name');
     tutorNameList.add(tutor['name']);
     print(tutor.get('name'));
-    tutorList.add(Item.build(
-      value: tutor.id,
-      display: tutor.get('name'),
-      content: tutor.get('name').toString(),
-    ));
+
+    if(tutor['available']==true){
+      tutorList.add(Item.build(
+        value: tutor.id,
+        display: tutor.get('name'),
+        content: tutor.get('name').toString(),
+      ));
+    }
 
   }
-print(tutorList);
+
 }
 
 

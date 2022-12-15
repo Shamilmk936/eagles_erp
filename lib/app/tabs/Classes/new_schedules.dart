@@ -772,7 +772,7 @@ class _NewSchedulesState extends State<NewSchedules> {
                             DataCell(Text(ClassIdToName[history['batch']]??'',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
                             DataCell(Text(dateTimeFormat('dd-MMM-yyyy hh:mm', history['scheduled'].toDate()),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
                             DataCell(Text(history['description'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
-                            DataCell(Text(tutorMap[history['tutor']]['name'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
+                            DataCell(Text(tutorIdToName[history['tutor']],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
                             DataCell(Text(history['subject'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
                             DataCell(   Row(
                               children: [
@@ -948,7 +948,7 @@ class _NewSchedulesState extends State<NewSchedules> {
                             DataCell(Text(ClassIdToName[history['batch']]??'',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
                             DataCell(Text(dateTimeFormat('dd-MMM-yyyy hh:mm', history['scheduled'].toDate()),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
                             DataCell(Text(history['description'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
-                            DataCell(Text(tutorMap[history['tutor']]['name'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
+                            DataCell(Text(tutorIdToName[history['tutor']],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
                             DataCell(Text(history['subject'],style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11))),
 
                             // DataCell(Text(fileInfo.size)),

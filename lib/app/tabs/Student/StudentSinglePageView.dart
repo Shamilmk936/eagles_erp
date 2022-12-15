@@ -1,7 +1,8 @@
 
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
-import 'dart:math';
+
 import 'dart:typed_data';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:smile_erp/backend/backend.dart';
 import 'package:smile_erp/backend/schema/index.dart';
 import 'package:smile_erp/flutter_flow/flutter_flow_util.dart';
@@ -18,11 +20,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../Login/login.dart';
-import '../../../auth/auth_util.dart';
-import '../../../fee_report/api/Invoice.dart';
-import '../../../fee_report/api/download_pdf.dart';
-import '../../../fee_report/api/pdfPage.dart';
-import '../../../fee_report/api/pdf_api.dart';
 import '../../../flutter_flow/flutter_flow_drop_down.dart';
 import '../../../flutter_flow/flutter_flow_icon_button.dart';
 import '../../../flutter_flow/flutter_flow_theme.dart';
@@ -73,7 +70,7 @@ class _StudentSinglePageViewState
   TextEditingController lastName;
   TextEditingController email;
   String countryCode='IN';
-  String phoneCode='';
+  String phoneCode='+91';
   TextEditingController mobile;
   TextEditingController studentPlace;
   TextEditingController address;
@@ -236,6 +233,7 @@ print('ccccccccccc');
       String intake
       ) async {
 
+    print('hhhhhhh');
     FirebaseFirestore.instance.collection('mail')
         .add({
       'date':DateTime.now(),
@@ -1147,137 +1145,171 @@ print('ccccccccccc');
                               30, 10, 30, 5),
                           child: Row(
                             children: [
+                              // Expanded(
+                              //   child: Container(
+                              //     width: 330,
+                              //     color: Colors.white,
+                              //     child: Padding(
+                              //       padding: EdgeInsets.fromLTRB(
+                              //           16, 0, 0, 0),
+                              //       child: Row(
+                              //         children: [
+                              //           CountryPickerDropdown(
+                              //             initialValue:
+                              //             countryCode ?? 'IN',
+                              //             itemBuilder:
+                              //             _buildDropdownItem,
+                              //             // itemFilter:  ['AR', 'DE', 'GB', 'CN'].contains(c.isoCode),
+                              //             priorityList: [
+                              //               CountryPickerUtils
+                              //                   .getCountryByIsoCode(
+                              //                   'GB'),
+                              //               CountryPickerUtils
+                              //                   .getCountryByIsoCode(
+                              //                   'CN'),
+                              //             ],
+                              //             sortComparator: (Country a,
+                              //                 Country b) =>
+                              //                 a.isoCode
+                              //                     .compareTo(b.isoCode),
+                              //             onValuePicked:
+                              //                 (Country country) {
+                              //               countryCode =
+                              //                   country.isoCode;
+                              //               phoneCode =
+                              //                   '+' + country.phoneCode;
+                              //
+                              //               setState(() {});
+                              //             },
+                              //           ),
+                              //           SizedBox(
+                              //             width: 10,
+                              //           ),
+                              //           Expanded(
+                              //             child:
+                              //             TextFormField(
+                              //               inputFormatters: <
+                              //                   TextInputFormatter>[
+                              //                 LengthLimitingTextInputFormatter(
+                              //                     10)
+                              //               ],
+                              //               autovalidateMode:
+                              //               AutovalidateMode
+                              //                   .onUserInteraction,
+                              //               keyboardType:
+                              //               TextInputType.phone,
+                              //               validator: (value) {
+                              //                 if (value.isEmpty) {
+                              //                   return "Enter phone number";
+                              //                 } else if (!RegExp(
+                              //                     r'(^(?:[+0]9)?[0-9]{10,12}$)')
+                              //                     .hasMatch(value)) {
+                              //                   return "phone number is not valid";
+                              //                 } else {
+                              //                   return null;
+                              //                 }
+                              //               },
+                              //               controller: mobile,
+                              //               decoration: InputDecoration(
+                              //                 labelText: 'Mobile',
+                              //                 labelStyle:
+                              //                 FlutterFlowTheme
+                              //                     .bodyText2
+                              //                     .override(
+                              //                   fontFamily:
+                              //                   'Montserrat',
+                              //                   color: Colors.black,
+                              //                   fontWeight:
+                              //                   FontWeight.w500,
+                              //                 ),
+                              //                 hintText:
+                              //                 'Please Enter Mobile',
+                              //                 hintStyle:
+                              //                 FlutterFlowTheme
+                              //                     .bodyText2
+                              //                     .override(
+                              //                   fontFamily:
+                              //                   'Montserrat',
+                              //                   color: Colors.black,
+                              //                   fontWeight:
+                              //                   FontWeight.w500,
+                              //                 ),
+                              //                 enabledBorder:
+                              //                 UnderlineInputBorder(
+                              //                   borderSide: BorderSide(
+                              //                     color: Colors
+                              //                         .transparent,
+                              //                     width: 1,
+                              //                   ),
+                              //                   borderRadius:
+                              //                   const BorderRadius
+                              //                       .only(
+                              //                     topLeft:
+                              //                     Radius.circular(
+                              //                         4.0),
+                              //                     topRight:
+                              //                     Radius.circular(
+                              //                         4.0),
+                              //                   ),
+                              //                 ),
+                              //                 focusedBorder:
+                              //                 UnderlineInputBorder(
+                              //                     borderSide:
+                              //                     BorderSide(
+                              //                       color: Colors
+                              //                           .transparent,
+                              //                       width: 1,
+                              //                     ),
+                              //                     borderRadius:
+                              //                     BorderRadius
+                              //                         .circular(
+                              //                         10)),
+                              //               ),
+                              //               style: FlutterFlowTheme
+                              //                   .bodyText2
+                              //                   .override(
+                              //                 fontFamily: 'Montserrat',
+                              //                 color: Colors.black,
+                              //                 fontWeight:
+                              //                 FontWeight.w500,
+                              //               ),
+                              //             ),
+                              //           ),
+                              //
+                              //
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
                               Expanded(
                                 child: Container(
                                   width: 330,
-                                  color: Colors.white,
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(
-                                        16, 0, 0, 0),
-                                    child: Row(
-                                      children: [
-                                        CountryPickerDropdown(
-                                          initialValue:
-                                          countryCode ?? 'IN',
-                                          itemBuilder:
-                                          _buildDropdownItem,
-                                          // itemFilter:  ['AR', 'DE', 'GB', 'CN'].contains(c.isoCode),
-                                          priorityList: [
-                                            CountryPickerUtils
-                                                .getCountryByIsoCode(
-                                                'GB'),
-                                            CountryPickerUtils
-                                                .getCountryByIsoCode(
-                                                'CN'),
-                                          ],
-                                          sortComparator: (Country a,
-                                              Country b) =>
-                                              a.isoCode
-                                                  .compareTo(b.isoCode),
-                                          onValuePicked:
-                                              (Country country) {
-                                            countryCode =
-                                                country.isoCode;
-                                            phoneCode =
-                                                '+' + country.phoneCode;
-
-                                            setState(() {});
-                                          },
+                                  // color: Colors.white,
+                                  child: IntlPhoneField(
+                                    controller: mobile,
+                                    decoration: InputDecoration(
+                                      fillColor: Colors.white,
+                                      filled: true,
+                                      labelText: 'Phone Number',
+                                      border: OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Color(0xFFE6E6E6),
                                         ),
-                                        SizedBox(
-                                          width: 10,
-                                        ),
-                                        Expanded(
-                                          child: TextFormField(
-                                            inputFormatters: <
-                                                TextInputFormatter>[
-                                              LengthLimitingTextInputFormatter(
-                                                  10)
-                                            ],
-                                            autovalidateMode:
-                                            AutovalidateMode
-                                                .onUserInteraction,
-                                            keyboardType:
-                                            TextInputType.phone,
-                                            validator: (value) {
-                                              if (value.isEmpty) {
-                                                return "Enter phone number";
-                                              } else if (!RegExp(
-                                                  r'(^(?:[+0]9)?[0-9]{10,12}$)')
-                                                  .hasMatch(value)) {
-                                                return "phone number is not valid";
-                                              } else {
-                                                return null;
-                                              }
-                                            },
-                                            controller: mobile,
-                                            decoration: InputDecoration(
-                                              labelText: 'Mobile',
-                                              labelStyle:
-                                              FlutterFlowTheme
-                                                  .bodyText2
-                                                  .override(
-                                                fontFamily:
-                                                'Montserrat',
-                                                color: Colors.black,
-                                                fontWeight:
-                                                FontWeight.w500,
-                                              ),
-                                              hintText:
-                                              'Please Enter Mobile',
-                                              hintStyle:
-                                              FlutterFlowTheme
-                                                  .bodyText2
-                                                  .override(
-                                                fontFamily:
-                                                'Montserrat',
-                                                color: Colors.black,
-                                                fontWeight:
-                                                FontWeight.w500,
-                                              ),
-                                              enabledBorder:
-                                              UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                  color: Colors
-                                                      .transparent,
-                                                  width: 1,
-                                                ),
-                                                borderRadius:
-                                                const BorderRadius
-                                                    .only(
-                                                  topLeft:
-                                                  Radius.circular(
-                                                      4.0),
-                                                  topRight:
-                                                  Radius.circular(
-                                                      4.0),
-                                                ),
-                                              ),
-                                              focusedBorder:
-                                              UnderlineInputBorder(
-                                                  borderSide:
-                                                  BorderSide(
-                                                    color: Colors
-                                                        .transparent,
-                                                    width: 1,
-                                                  ),
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      10)),
-                                            ),
-                                            style: FlutterFlowTheme
-                                                .bodyText2
-                                                .override(
-                                              fontFamily: 'Montserrat',
-                                              color: Colors.black,
-                                              fontWeight:
-                                              FontWeight.w500,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
+                                    initialCountryCode: countryCode,
+                                    onChanged: (phone) {
+                                      phoneCode=phone.countryCode;
+                                      countryCode=phone.countryISOCode;
+                                      log(phoneCode);
+                                      print(countryCode+'**********');
+
+                                      setState(() {
+
+                                      });
+
+                                    },
                                   ),
                                 ),
                               ),

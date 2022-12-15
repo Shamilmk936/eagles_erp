@@ -1024,7 +1024,9 @@ class _EnquiryDetailsWidgetState extends State<EnquiryDetailsWidget> {
                                                                       additionalInfo: data['additionalInfo'],
                                                                       educationalDetails: educationalDetails,
                                                                       eId: data.id,
-                                                                      courses:data['courses']
+                                                                      courses:data['courses'],
+                                                                      phnCode:data['phoneCode'],
+                                                                      cntyCode: data['countryCode'],
 
                                                                     )));
                                                       }

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:smile_erp/app/tabs/Enquiry/AddEnquiry.dart';
 import 'package:smile_erp/auth/auth_util.dart';
 import 'package:smile_erp/backend/backend.dart';
@@ -39,6 +42,9 @@ class _EditEnquiryState extends State<EditEnquiry> {
   TextEditingController branch;
   TextEditingController course;
   TextEditingController address;
+
+  String phoneCode;
+  String countryCode;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   List educationDetails = [];
@@ -60,7 +66,7 @@ class _EditEnquiryState extends State<EditEnquiry> {
     }
     print(universityCourses);
     print('Jjjjjjjjjjjjjjj');
-    course.text=universityCourses[0];
+    // course.text=universityCourses[0];
 
     if(mounted){
       setState(() {
@@ -96,15 +102,22 @@ class _EditEnquiryState extends State<EditEnquiry> {
         .doc(widget.eId)
         .get();
 
+    getCourses(data.get('university'));
+
+    print(data.get('phoneCode'));
+    print(data.get('countryCode'));
     name.text = data.get('name');
     place.text = data.get('place');
     mobile.text = data.get('mobile');
     email.text = data.get('email');
+    phoneCode=data.get('phoneCode');
+    countryCode=data.get('countryCode');
+    print(phoneCode);
+    print(countryCode);
     additionalInfo.text = data.get('additionalInfo');
     university.text=UniversityIdToName[data.get('university')];
-    // universityList.add(data.get('university'));
+
     course.text = CourseIdToName[data.get('courses')];
-    universityCourses.add(data.get('courses'));
     if(data.get('dob')!=null){
       dateOfBirth = data.get('dob').toDate()??'';
     }
@@ -112,13 +125,16 @@ class _EditEnquiryState extends State<EditEnquiry> {
       educationDetails = data.get('educationalDetails');
     }
 
+    setState(() {
+
+    });
+
   }
 
   String selectedUniversity;
   DateTime dateOfBirth;
   String yearOfPassout;
   DateTime selectedDate = DateTime.now();
-
 
   bool loaded = true;
 
@@ -136,7 +152,6 @@ class _EditEnquiryState extends State<EditEnquiry> {
     branch = TextEditingController();
     course = TextEditingController(text: "");
     address = TextEditingController();
-    // universityCourses.add("");
     getData();
     super.initState();
 
@@ -147,9 +162,6 @@ class _EditEnquiryState extends State<EditEnquiry> {
 
   @override
   Widget build(BuildContext context) {
-    print("------------------------------------------------------");
-    print(universityList.contains(university.text));
-    print(universityCourses.contains(course.text));
     return Scaffold(
       key: scaffoldKey,
       appBar: AppBar(
@@ -446,90 +458,123 @@ class _EditEnquiryState extends State<EditEnquiry> {
                                                     SizedBox(
                                                       width: 10,
                                                     ),
+                                                    // Expanded(
+                                                    //   child: Container(
+                                                    //     width: 350,
+                                                    //     color: Colors.white,
+                                                    //     child: Padding(
+                                                    //       padding: EdgeInsets
+                                                    //           .fromLTRB(
+                                                    //           16, 0, 0, 0),
+                                                    //       child: TextFormField(
+                                                    //         controller: mobile,
+                                                    //         inputFormatters: <
+                                                    //             TextInputFormatter>[
+                                                    //           LengthLimitingTextInputFormatter(
+                                                    //               10)
+                                                    //         ],
+                                                    //         autovalidateMode:
+                                                    //         AutovalidateMode
+                                                    //             .onUserInteraction,
+                                                    //         keyboardType:
+                                                    //         TextInputType
+                                                    //             .phone,
+                                                    //         validator: (email) {
+                                                    //           if (email
+                                                    //               .isEmpty) {
+                                                    //             return "Enter your phone number";
+                                                    //           } else if (!RegExp(
+                                                    //               r'(^(?:[+0]9)?[0-9]{10,12}$)')
+                                                    //               .hasMatch(
+                                                    //               email)) {
+                                                    //             return "phone number is not valid";
+                                                    //           } else {
+                                                    //             return null;
+                                                    //           }
+                                                    //         },
+                                                    //         decoration: InputDecoration(
+                                                    //             labelText:
+                                                    //             'Mobile',
+                                                    //             labelStyle: FlutterFlowTheme.bodyText2.override(
+                                                    //                 fontFamily:
+                                                    //                 'Montserrat',
+                                                    //                 color: Colors
+                                                    //                     .black,
+                                                    //                 fontWeight: FontWeight
+                                                    //                     .w500,
+                                                    //                 fontSize:
+                                                    //                 12),
+                                                    //             hintText:
+                                                    //             'Please Enter Mobile No',
+                                                    //             hintStyle: FlutterFlowTheme.bodyText2.override(
+                                                    //                 fontFamily:
+                                                    //                 'Montserrat',
+                                                    //                 color: Colors
+                                                    //                     .black,
+                                                    //                 fontWeight:
+                                                    //                 FontWeight
+                                                    //                     .w500,
+                                                    //                 fontSize:
+                                                    //                 12),
+                                                    //             errorBorder:
+                                                    //             errorOutlineInputBOrder,
+                                                    //             border:
+                                                    //             outlineInputBorder,
+                                                    //             disabledBorder:
+                                                    //             outlineInputBorder,
+                                                    //             focusedErrorBorder:
+                                                    //             errorOutlineInputBOrder,
+                                                    //             enabledBorder:
+                                                    //             outlineInputBorder,
+                                                    //             focusedBorder:
+                                                    //             outlineInputBorder
+                                                    //         ),
+                                                    //         style: FlutterFlowTheme
+                                                    //             .bodyText2
+                                                    //             .override(
+                                                    //             fontFamily:
+                                                    //             'Montserrat',
+                                                    //             color: Colors
+                                                    //                 .black,
+                                                    //             fontWeight:
+                                                    //             FontWeight
+                                                    //                 .w500,
+                                                    //             fontSize:
+                                                    //             12),
+                                                    //       ),
+                                                    //     ),
+                                                    //   ),
+                                                    // ),
                                                     Expanded(
                                                       child: Container(
-                                                        width: 350,
-                                                        color: Colors.white,
-                                                        child: Padding(
-                                                          padding: EdgeInsets
-                                                              .fromLTRB(
-                                                              16, 0, 0, 0),
-                                                          child: TextFormField(
-                                                            controller: mobile,
-                                                            inputFormatters: <
-                                                                TextInputFormatter>[
-                                                              LengthLimitingTextInputFormatter(
-                                                                  10)
-                                                            ],
-                                                            autovalidateMode:
-                                                            AutovalidateMode
-                                                                .onUserInteraction,
-                                                            keyboardType:
-                                                            TextInputType
-                                                                .phone,
-                                                            validator: (email) {
-                                                              if (email
-                                                                  .isEmpty) {
-                                                                return "Enter your phone number";
-                                                              } else if (!RegExp(
-                                                                  r'(^(?:[+0]9)?[0-9]{10,12}$)')
-                                                                  .hasMatch(
-                                                                  email)) {
-                                                                return "phone number is not valid";
-                                                              } else {
-                                                                return null;
-                                                              }
-                                                            },
-                                                            decoration: InputDecoration(
-                                                                labelText:
-                                                                'Mobile',
-                                                                labelStyle: FlutterFlowTheme.bodyText2.override(
-                                                                    fontFamily:
-                                                                    'Montserrat',
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight: FontWeight
-                                                                        .w500,
-                                                                    fontSize:
-                                                                    12),
-                                                                hintText:
-                                                                'Please Enter Mobile No',
-                                                                hintStyle: FlutterFlowTheme.bodyText2.override(
-                                                                    fontFamily:
-                                                                    'Montserrat',
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                    fontSize:
-                                                                    12),
-                                                                errorBorder:
-                                                                errorOutlineInputBOrder,
-                                                                border:
-                                                                outlineInputBorder,
-                                                                disabledBorder:
-                                                                outlineInputBorder,
-                                                                focusedErrorBorder:
-                                                                errorOutlineInputBOrder,
-                                                                enabledBorder:
-                                                                outlineInputBorder,
-                                                                focusedBorder:
-                                                                outlineInputBorder
+                                                        width: 330,
+                                                        // color: Colors.white,
+                                                        child: IntlPhoneField(
+                                                          controller: mobile,
+                                                          decoration: InputDecoration(
+                                                            fillColor: Colors.white,
+                                                            filled: true,
+                                                            labelText: 'Phone Number',
+                                                            border: OutlineInputBorder(
+                                                              borderSide: BorderSide(
+                                                                color: Color(0xFFE6E6E6),
+                                                              ),
                                                             ),
-                                                            style: FlutterFlowTheme
-                                                                .bodyText2
-                                                                .override(
-                                                                fontFamily:
-                                                                'Montserrat',
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .w500,
-                                                                fontSize:
-                                                                12),
                                                           ),
+                                                          initialCountryCode: countryCode.toString(),
+                                                          // phoneCode.substring(1),
+                                                          onChanged: (phone) {
+
+                                                            phoneCode=phone.countryCode;
+                                                            countryCode=phone.countryISOCode;
+                                                            log(phoneCode);
+                                                            print(countryCode+'**********');
+
+                                                            setState(() {
+
+                                                            });
+
+                                                          },
                                                         ),
                                                       ),
                                                     ),
@@ -1116,13 +1161,9 @@ class _EditEnquiryState extends State<EditEnquiry> {
                                                           0, 0, 8, 0),
                                                       child: FFButtonWidget(
                                                         onPressed: () {
-                                                          if (qualification
-                                                              .text !=
-                                                              '' &&
-                                                              institute.text !=
-                                                                  '' &&
-                                                              yearOfPassout !=
-                                                                  '') {
+                                                          if (qualification.text != '' &&
+                                                              institute.text != '' &&
+                                                              yearOfPassout != '') {
                                                             educationDetails
                                                                 .add({
                                                               'qualification':
@@ -1490,7 +1531,7 @@ class _EditEnquiryState extends State<EditEnquiry> {
                                                       if (name.text != '' &&
                                                           place.text != '' &&
                                                           mobile.text != '' &&
-                                                          course.text != '') {
+                                                      course.text!='') {
                                                         bool proceed = await alert(
                                                             context,
                                                             'You want to Update this Enquiry?');
@@ -1516,6 +1557,8 @@ class _EditEnquiryState extends State<EditEnquiry> {
                                                             'status': 0,
                                                             'enquiryId': widget.eId,
                                                             'university':UniversityNameToId[university.text],
+                                                            'countryCode':countryCode,
+                                                            'phoneCode':phoneCode,
                                                           });
                                                           showUploadMessage(context, 'Enquiry edited Successfully...');
                                                         }
@@ -1526,7 +1569,6 @@ class _EditEnquiryState extends State<EditEnquiry> {
                                                             ? showUploadMessage(context, 'Please Enter Place')
                                                             : mobile.text == ''
                                                             ? showUploadMessage(context, 'Please Enter Mobile Number')
-                                                            : course.text == '' ? showUploadMessage(context, 'Please select course')
                                                             : showUploadMessage(context, 'Please select course');
                                                       }
                                                     },

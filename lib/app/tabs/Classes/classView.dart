@@ -34,6 +34,9 @@ class _ClassSinglePageState extends State<ClassSinglePage> {
       for(var student in event.docs){
         students.add(student);
       }
+      setState(() {
+
+      });
     });
 
   }
@@ -140,13 +143,13 @@ class _ClassSinglePageState extends State<ClassSinglePage> {
                           },
                           child: Container(
                             height: 50,
-                            width: 100,
+                            width: 150,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.teal
                             ),
                             child: Center(
-                                child: Text('Update'
+                                child: Text('Update Tutor'
                                 ,style: TextStyle(fontSize: 15,color: Colors.white),)
                             ),
                           ),
@@ -314,7 +317,31 @@ class _ClassSinglePageState extends State<ClassSinglePage> {
                         );
                       }
                   ),
-
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: () async {
+                        bool pressed=await alert(context, 'update Subjects');
+                        if(pressed){
+                          data.reference.update({
+                            'subject':subjectList
+                          });
+                        }
+                      },
+                      child: Container(
+                        height: 50,
+                        width: 150,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Colors.teal
+                        ),
+                        child: Center(
+                            child: Text('Update Subjects'
+                              ,style: TextStyle(fontSize: 15,color: Colors.white),)
+                        ),
+                      ),
+                    ),
+                  ),
 
                   Padding(
                     padding: const EdgeInsets.all(15.0),

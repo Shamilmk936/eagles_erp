@@ -1,5 +1,8 @@
 
+import 'dart:developer';
+
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:smile_erp/auth/auth_util.dart';
 import 'package:smile_erp/backend/backend.dart';
 import 'package:smile_erp/backend/schema/index.dart';
@@ -43,6 +46,8 @@ class _AddEnquiryWidgetState extends State<AddEnquiryWidget> {
   TextEditingController institute;
   TextEditingController university;
   DateTime dateOfBirth;
+  String countryCode='IN';
+  String phoneCode='+91';
 
 
   String selectedUniversity;
@@ -358,86 +363,118 @@ class _AddEnquiryWidgetState extends State<AddEnquiryWidget> {
                                                 ),
                                               ),
                                               SizedBox(width: 10,),
+                                              // Expanded(
+                                              //   child: Container(
+                                              //     color: Colors.white,
+                                              //     width: 350,
+                                              //     child: Padding(
+                                              //       padding: EdgeInsets.fromLTRB(
+                                              //           16, 0, 0, 0),
+                                              //       child: TextFormField(
+                                              //         inputFormatters: <TextInputFormatter>[
+                                              //           LengthLimitingTextInputFormatter(10)
+                                              //         ],
+                                              //         autovalidateMode: AutovalidateMode.onUserInteraction,
+                                              //         keyboardType: TextInputType.phone,
+                                              //         validator: (email) {
+                                              //           if (email.isEmpty) {
+                                              //             return "Enter your phone number";
+                                              //           } else if (!RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)')
+                                              //               .hasMatch(email)) {
+                                              //             return "phone number is not valid";
+                                              //           } else {
+                                              //             return null;
+                                              //           }
+                                              //         },
+                                              //         controller: mobile,
+                                              //         obscureText: false,
+                                              //         decoration: InputDecoration(
+                                              //           labelText: 'Mobile',
+                                              //           labelStyle: FlutterFlowTheme
+                                              //               .bodyText2
+                                              //               .override(
+                                              //               fontFamily: 'Montserrat',
+                                              //               color: Colors.black,
+                                              //               fontWeight: FontWeight.w500,
+                                              //               fontSize: 12
+                                              //
+                                              //           ),
+                                              //           hintText: 'Please Enter Mobile No',
+                                              //           hintStyle: FlutterFlowTheme
+                                              //               .bodyText2
+                                              //               .override(
+                                              //               fontFamily: 'Montserrat',
+                                              //               color: Colors.black,
+                                              //               fontWeight: FontWeight.w500,
+                                              //               fontSize: 12
+                                              //
+                                              //           ),
+                                              //           enabledBorder:
+                                              //           UnderlineInputBorder(
+                                              //             borderSide: BorderSide(
+                                              //               color: Colors.transparent,
+                                              //               width: 1,
+                                              //             ),
+                                              //             borderRadius:
+                                              //             const BorderRadius.only(
+                                              //               topLeft:
+                                              //               Radius.circular(4.0),
+                                              //               topRight:
+                                              //               Radius.circular(4.0),
+                                              //             ),
+                                              //           ),
+                                              //           focusedBorder:
+                                              //           UnderlineInputBorder(
+                                              //               borderSide: BorderSide(
+                                              //                 color: Colors
+                                              //                     .transparent,
+                                              //                 width: 1,
+                                              //               ),
+                                              //               borderRadius:
+                                              //               BorderRadius
+                                              //                   .circular(10)),
+                                              //         ),
+                                              //         style: FlutterFlowTheme.bodyText2
+                                              //             .override(
+                                              //             fontFamily: 'Montserrat',
+                                              //             color: Color(0xFF8B97A2),
+                                              //             fontWeight: FontWeight.w500,
+                                              //             fontSize: 12
+                                              //
+                                              //         ),
+                                              //       ),
+                                              //     ),
+                                              //   ),
+                                              // ),
                                               Expanded(
                                                 child: Container(
-                                                  color: Colors.white,
-                                                  width: 350,
-                                                  child: Padding(
-                                                    padding: EdgeInsets.fromLTRB(
-                                                        16, 0, 0, 0),
-                                                    child: TextFormField(
-                                                      inputFormatters: <TextInputFormatter>[
-                                                        LengthLimitingTextInputFormatter(10)
-                                                      ],
-                                                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                                                      keyboardType: TextInputType.phone,
-                                                      validator: (email) {
-                                                        if (email.isEmpty) {
-                                                          return "Enter your phone number";
-                                                        } else if (!RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)')
-                                                            .hasMatch(email)) {
-                                                          return "phone number is not valid";
-                                                        } else {
-                                                          return null;
-                                                        }
-                                                      },
-                                                      controller: mobile,
-                                                      obscureText: false,
-                                                      decoration: InputDecoration(
-                                                        labelText: 'Mobile',
-                                                        labelStyle: FlutterFlowTheme
-                                                            .bodyText2
-                                                            .override(
-                                                            fontFamily: 'Montserrat',
-                                                            color: Colors.black,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: 12
-
+                                                  width: 330,
+                                                  // color: Colors.white,
+                                                  child: IntlPhoneField(
+                                                    controller: mobile,
+                                                    decoration: InputDecoration(
+                                                      fillColor: Colors.white,
+                                                      filled: true,
+                                                      labelText: 'Phone Number',
+                                                      border: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                          color: Color(0xFFE6E6E6),
                                                         ),
-                                                        hintText: 'Please Enter Mobile No',
-                                                        hintStyle: FlutterFlowTheme
-                                                            .bodyText2
-                                                            .override(
-                                                            fontFamily: 'Montserrat',
-                                                            color: Colors.black,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: 12
-
-                                                        ),
-                                                        enabledBorder:
-                                                        UnderlineInputBorder(
-                                                          borderSide: BorderSide(
-                                                            color: Colors.transparent,
-                                                            width: 1,
-                                                          ),
-                                                          borderRadius:
-                                                          const BorderRadius.only(
-                                                            topLeft:
-                                                            Radius.circular(4.0),
-                                                            topRight:
-                                                            Radius.circular(4.0),
-                                                          ),
-                                                        ),
-                                                        focusedBorder:
-                                                        UnderlineInputBorder(
-                                                            borderSide: BorderSide(
-                                                              color: Colors
-                                                                  .transparent,
-                                                              width: 1,
-                                                            ),
-                                                            borderRadius:
-                                                            BorderRadius
-                                                                .circular(10)),
-                                                      ),
-                                                      style: FlutterFlowTheme.bodyText2
-                                                          .override(
-                                                          fontFamily: 'Montserrat',
-                                                          color: Color(0xFF8B97A2),
-                                                          fontWeight: FontWeight.w500,
-                                                          fontSize: 12
-
                                                       ),
                                                     ),
+                                                    initialCountryCode:'IN',
+                                                    onChanged: (phone) {
+
+                                                      phoneCode=phone.countryCode;
+                                                      countryCode=phone.countryISOCode;
+                                                      log(phoneCode);
+                                                      print(countryCode+'**********');
+
+                                                      setState(() {
+
+                                                      });
+
+                                                    },
                                                   ),
                                                 ),
                                               ),
@@ -1137,7 +1174,7 @@ class _AddEnquiryWidgetState extends State<AddEnquiryWidget> {
                                             child: FFButtonWidget(
                                               onPressed: ()  async {
 
-                                                if(name.text!=''&&place.text!=''&&mobile.text!=''&&course.text!=''&&university.text!=''){
+                                                if(name.text!=''&&place.text!=''&&mobile.text!=''&&course.text!='' &&university.text!=''){
 
                                                   bool proceed = await alert(context, 'You want to Add this Enquiry?');
 
@@ -1176,7 +1213,9 @@ class _AddEnquiryWidgetState extends State<AddEnquiryWidget> {
                                                         userEmail:currentUserEmail,
                                                         search:setSearchParam(name.text+" "+mobile.text),
                                                         check:false,
-                                                        enquiryId:'E'+currentbranchShortName+enquiryId.toString()
+                                                        enquiryId:'E'+currentbranchShortName+enquiryId.toString(),
+                                                        phoneCode: phoneCode,
+                                                        countryCode: countryCode
                                                     ).toJson();
 
 

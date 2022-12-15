@@ -19,6 +19,8 @@ class Enquiry{
   bool check;
   String university;
   String enquiryId;
+  String phoneCode;
+  String countryCode;
 
   Enquiry({
     this.enquiryId='',
@@ -38,6 +40,8 @@ class Enquiry{
     this.search,
     this.check,
     this.university,
+    this.phoneCode,
+    this.countryCode
 
   });
 
@@ -59,6 +63,8 @@ class Enquiry{
     'search':search,
     'check':check,
     'university':university,
+    'phoneCode':phoneCode,
+    'countryCode':countryCode
 
   };
 
@@ -80,6 +86,8 @@ class Enquiry{
     search: json['search'],
     check: json['check'],
     university: json['university'],
+    phoneCode: json['phoneCode'],
+    countryCode: json['countryCode']
 
   );
 
