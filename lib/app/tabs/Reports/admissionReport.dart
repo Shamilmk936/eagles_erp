@@ -584,6 +584,12 @@ class _AdmissionReportState extends State<AdmissionReport> {
       ..click();
   }
 
+  ScrollController _scrollController = new ScrollController(
+    initialScrollOffset: 0.0,
+    keepScrollOffset: true,
+  );
+
+
   @override
   void initState() {
     // TODO: implement initState
@@ -597,6 +603,7 @@ class _AdmissionReportState extends State<AdmissionReport> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Column(
             children: [
               Padding(

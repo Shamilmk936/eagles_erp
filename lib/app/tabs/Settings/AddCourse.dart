@@ -251,7 +251,7 @@ class _AddCourseWidgetState extends State<AddCourseWidget> {
                       Expanded(
                         child: FlutterFlowDropDown(
                           initialOption: eCourseType??'UG',
-                          options: ['UG','PG', 'Diploma','Plus Two','SSLC'].toList(),
+                          options: ['UG','PG','Plus Two','SSLC'].toList(),
                           onChanged: (val) => setState(() => eCourseType = val),
                           width: 180,
                           height: 50,
@@ -259,7 +259,7 @@ class _AddCourseWidgetState extends State<AddCourseWidget> {
                             fontFamily: 'Poppins',
                             color: Colors.black,
                           ),
-                          hintText: 'Please select Duration',
+                          hintText: 'Please select Programme',
                           fillColor: Colors.white,
                           elevation: 2,
                           borderColor: Colors.black,
@@ -296,7 +296,7 @@ class _AddCourseWidgetState extends State<AddCourseWidget> {
                             }
 
                           }else{
-                            name.text==''?showUploadMessage(context, 'Please Enter Name'):
+                            eName.text==''?showUploadMessage(context, 'Please Enter Name'):
                             showUploadMessage(context, 'Please Select course type');
                           }
                         },
@@ -435,7 +435,7 @@ class _AddCourseWidgetState extends State<AddCourseWidget> {
                       FFButtonWidget(
                         onPressed: () async {
 
-                          if(name.text!=''&&courseType!=''){
+                          if(name.text!=''&&courseType!=null){
 
                             bool proceed = await alert(context,
                                 'You want to Add This Course?');
@@ -458,7 +458,7 @@ class _AddCourseWidgetState extends State<AddCourseWidget> {
 
                           }else{
                             name.text==''?showUploadMessage(context, 'Please Enter Name'):
-                            showUploadMessage(context, 'Please Select duration');
+                            showUploadMessage(context, 'Please Select Course Type');
                           }
                         },
                         text: 'Add',

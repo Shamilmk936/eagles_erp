@@ -307,6 +307,11 @@ class _EnquiryReportState extends State<EnquiryReport> {
       ..click();
   }
 
+  ScrollController _scrollController = new ScrollController(
+    initialScrollOffset: 0.0,
+    keepScrollOffset: true,
+  );
+
   @override
   void initState() {
     super.initState();
@@ -320,6 +325,7 @@ class _EnquiryReportState extends State<EnquiryReport> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [

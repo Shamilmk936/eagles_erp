@@ -68,6 +68,7 @@ class _AddClassState extends State<AddClass> {
     }
   }
 
+  //AVAILABLE
 
   var lastDoc;
   var firstDoc;
@@ -79,6 +80,7 @@ class _AddClassState extends State<AddClass> {
     FirebaseFirestore.instance
         .collection('class')
     .orderBy('date',descending: true)
+    .where('available',isEqualTo: true)
         .limit(limit)
         .snapshots()
         .listen((event) {
@@ -108,6 +110,7 @@ class _AddClassState extends State<AddClass> {
       FirebaseFirestore.instance
           .collection('class')
           .orderBy('date',descending: true)
+          .where('available',isEqualTo: true)
           .startAfterDocument(lastDoc)
           .limit(limit)
           .snapshots()
@@ -139,6 +142,7 @@ class _AddClassState extends State<AddClass> {
       FirebaseFirestore.instance
           .collection('class')
           .orderBy('date',descending: true)
+          .where('available',isEqualTo: true)
           .startAfterDocument(lastDocuments[pageIndex - 1])
           .limit(limit)
           .snapshots()
@@ -161,9 +165,110 @@ class _AddClassState extends State<AddClass> {
   }
 
 
+  //UNAVILABLE
+  var pastLastDoc;
+  var pastFirstDoc;
+  Map <int,DocumentSnapshot> pastLastDocuments={};
+  int pastPageIndex=0;
+  List pastBatch=[];
+  getPastBatch(){
+    FirebaseFirestore.instance
+        .collection('class')
+        .orderBy('date',descending: true)
+        .where('available',isEqualTo: false)
+        .limit(limit)
+        .snapshots()
+        .listen((event) {
+      pastBatch=[];
+      for(var students in event.docs){
+        pastBatch.add(students.data());
+      }
+      pastLastDoc = event.docs.last;
+      pastLastDocuments[pastPageIndex] = pastLastDoc;
+      pastFirstDoc = event.docs.first;
+      if(mounted){
+        setState(() {
+
+        });
+      }
+    });
+    print(pastBatch.length);
+    print('mmmm');
+  }
+  pNext() {
+    pastPageIndex++;
+    if (pastLastDoc == null || pastPageIndex == 0) {
+
+      print(pastLastDoc.toString()+'nnnnnnnnnnnnnnnnnn');
+      getPastBatch();
+    } else {
+      FirebaseFirestore.instance
+          .collection('class')
+          .orderBy('date',descending: true)
+          .where('available',isEqualTo: false)
+          .startAfterDocument(pastLastDoc)
+          .limit(limit)
+          .snapshots()
+          .listen((event) {
+
+        pastBatch = [];
+        for (DocumentSnapshot orders in event.docs) {
+          pastBatch.add(orders.data());
+        }
+        pastLastDoc = event.docs.last;
+        pastLastDocuments[pastPageIndex] = pastLastDoc;
+        pastFirstDoc = event.docs.first;
+        if (mounted) {
+          setState(() {});
+        }
+        print('  next  ');
+        print(pastBatch.length.toString()+'                mmmmmm');
+        print(pastLastDoc.toString()+'                jjj');
+      });
+    }
+
+    setState(() {});
+  }
+  pPrev() {
+    pastPageIndex--;
+    if (pastLastDoc == null || pastPageIndex == 0) {
+      getPastBatch();
+    } else {
+      FirebaseFirestore.instance
+          .collection('class')
+          .orderBy('date',descending: true)
+          .where('available',isEqualTo: false)
+          .startAfterDocument(pastLastDocuments[pastPageIndex - 1])
+          .limit(limit)
+          .snapshots()
+          .listen((event) {
+        pastBatch = [];
+        for (DocumentSnapshot orders in event.docs) {
+          pastBatch.add(orders.data());
+        }
+        pastLastDoc = event.docs.last;
+        pastLastDocuments[pastPageIndex] = pastLastDoc;
+        pastLastDoc = event.docs.first;
+        print('  prev  ');
+        print(pastBatch.length.toString()+'                mmmmmm');
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    }
+    setState(() {});
+  }
+  
+
+  ScrollController _scrollController = new ScrollController(
+    initialScrollOffset: 0.0,
+    keepScrollOffset: true,
+  );
+
   @override
   void initState() {
     getBatch();
+    getPastBatch();
     super.initState();
     name = TextEditingController();
     description = TextEditingController();
@@ -180,6 +285,7 @@ class _AddClassState extends State<AddClass> {
         backgroundColor: Color(0xFFECF0F5),
       body : SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           physics: BouncingScrollPhysics(),
           child: Column(
             children: [
@@ -746,196 +852,213 @@ class _AddClassState extends State<AddClass> {
                 ],
               ),
 
-              //display
-             batchList.length==0
-                 ?Center(child: CircularProgressIndicator(),)
-              :Padding(
-                      padding: const EdgeInsets.only(left: 30, right: 30),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: DataTable(
-                          horizontalMargin: 10,
-                          columnSpacing: 20,
-                          columns: [
-                            DataColumn(
-                              label: Text(
-                                "Name",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 11),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "University",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 11),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "Course",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 11),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "Intake",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 11),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "Access",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 11),
-                              ),
-                            ),
-                            DataColumn(
-                              label: Text(
-                                "Action",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 11),
-                              ),
-                            ),
-                          ],
-                          rows: List.generate(
-                            batchList.length,
-                                (index) {
-                              List tutorList=batchList[index]['tutors'];
-                              return DataRow(
-                                color: index.isOdd
-                                    ? MaterialStateProperty.all(Colors
-                                    .blueGrey.shade50
-                                    .withOpacity(0.7))
-                                    : MaterialStateProperty.all(
-                                    Colors.blueGrey.shade50),
-                                cells: [
-                                  DataCell(SelectableText(
-                                    batchList[index]['name'],
-                                    style: FlutterFlowTheme.bodyText2.override(
-                                      fontFamily: 'Lexend Deca',
-                                      color: Colors.black,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )),
-                                  DataCell(Text(
-                                    UniversityIdToName[batchList[index]['university']],
-                                    style: FlutterFlowTheme.bodyText2.override(
-                                      fontFamily: 'Lexend Deca',
-                                      color: Colors.black,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )),
-                                  DataCell(SelectableText(
-                                    CourseIdToName[batchList[index]['course']]??'',
-                                    style: FlutterFlowTheme.bodyText2.override(
-                                      fontFamily: 'Lexend Deca',
-                                      color: Colors.black,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )),
-                                  DataCell(SelectableText(
-                                    InTakeIdToName[batchList[index]['inTake']],
-                                    style: FlutterFlowTheme.bodyText2.override(
-                                      fontFamily: 'Lexend Deca',
-                                      color: Colors.black,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )),
-                                  DataCell(
-                                    FFButtonWidget(
-                                      onPressed: () async {
-                                        bool pressed = await alert(context,
-                                            'Do you want to change access?');
-                                        if (pressed) {
-
-                                          if(batchList[index]['available'] == true){
-                                            FirebaseFirestore.instance
-                                                .collection('class')
-                                            .doc(batchList[index]['id'])
-                                                .update({
-                                              'available': !batchList[index]['available'],
-                                            });
-
-                                          }else{
-                                            FirebaseFirestore.instance
-                                                .collection('class')
-                                                .doc(batchList[index]['id'])
-                                                .update({
-                                              'available': !batchList[index]['available'],
-                                            });
-                                          }
-
-                                        }
-
-                                      },
-                                      text: batchList[index]['available'] == true
-                                          ? 'Available'
-                                          : 'Unavailable',
-                                      options: FFButtonOptions(
-                                        width: 80,
-                                        height: 30,
-                                        color: Colors.white,
-                                        textStyle: FlutterFlowTheme.subtitle2
-                                            .override(
-                                            fontFamily: 'Poppins',
-                                            color: batchList[index]['available'] == true
-                                                ? Colors.teal
-                                                : Colors.red,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold),
-                                        borderSide: BorderSide(
-                                          color: Colors.transparent,
-                                          width: 1,
-                                        ),
-                                        borderRadius: 8,
-                                      ),
-                                    ),
-                                  ),
-                                  DataCell(InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => ClassSinglePage(
-                                                classId: batchList[index]['id'],
-                                              )));
-                                    },
-                                    child: Container(
-                                      height: 40,
-                                      width: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Colors.teal,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          'View',
-                                          style: FlutterFlowTheme.bodyText2
-                                              .override(
-                                            fontFamily: 'Lexend Deca',
-                                            color: Colors.white,
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  )),
-
-                                ],
-                              );
-                            },
-                          ),
-                        ),
+              //available
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Text(
+                      'Available batches',
+                      style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Poppins',
+                          fontSize: 19,
+                          fontWeight: FontWeight.w600
                       ),
                     ),
+                  ),
+                ],
+              ),
+
+              batchList.length==0
+                  ?Center(child: CircularProgressIndicator(),)
+                  :Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: DataTable(
+                    horizontalMargin: 10,
+                    columnSpacing: 20,
+                    columns: [
+                      DataColumn(
+                        label: Text(
+                          "Name",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "University",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "Course",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "Intake",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "Access",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "Action",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                    ],
+                    rows: List.generate(
+                      batchList.length,
+                          (index) {
+                        List tutorList=batchList[index]['tutors'];
+                        return DataRow(
+                          color: index.isOdd
+                              ? MaterialStateProperty.all(Colors
+                              .blueGrey.shade50
+                              .withOpacity(0.7))
+                              : MaterialStateProperty.all(
+                              Colors.blueGrey.shade50),
+                          cells: [
+                            DataCell(SelectableText(
+                              batchList[index]['name'],
+                              style: FlutterFlowTheme.bodyText2.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Colors.black,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                            DataCell(Text(
+                              UniversityIdToName[batchList[index]['university']],
+                              style: FlutterFlowTheme.bodyText2.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                            DataCell(SelectableText(
+                              CourseIdToName[batchList[index]['course']]??'',
+                              style: FlutterFlowTheme.bodyText2.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Colors.black,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                            DataCell(SelectableText(
+                              InTakeIdToName[batchList[index]['inTake']],
+                              style: FlutterFlowTheme.bodyText2.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Colors.black,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                            DataCell(
+                              FFButtonWidget(
+                                onPressed: () async {
+                                  bool pressed = await alert(context,
+                                      'Do you want to change access?');
+                                  if (pressed) {
+
+                                    if(batchList[index]['available'] == true){
+                                      FirebaseFirestore.instance
+                                          .collection('class')
+                                          .doc(batchList[index]['id'])
+                                          .update({
+                                        'available': !batchList[index]['available'],
+                                      });
+
+                                    }else{
+                                      FirebaseFirestore.instance
+                                          .collection('class')
+                                          .doc(batchList[index]['id'])
+                                          .update({
+                                        'available': !batchList[index]['available'],
+                                      });
+                                    }
+
+                                  }
+
+                                },
+                                text: batchList[index]['available'] == true
+                                    ? 'Available'
+                                    : 'Unavailable',
+                                options: FFButtonOptions(
+                                  width: 80,
+                                  height: 30,
+                                  color: Colors.white,
+                                  textStyle: FlutterFlowTheme.subtitle2
+                                      .override(
+                                      fontFamily: 'Poppins',
+                                      color: batchList[index]['available'] == true
+                                          ? Colors.teal
+                                          : Colors.red,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    width: 1,
+                                  ),
+                                  borderRadius: 8,
+                                ),
+                              ),
+                            ),
+                            DataCell(InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ClassSinglePage(
+                                          classId: batchList[index]['id'],
+                                        )));
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.teal,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'View',
+                                    style: FlutterFlowTheme.bodyText2
+                                        .override(
+                                      fontFamily: 'Lexend Deca',
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )),
+
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
 
               Row(
                 children: [
@@ -966,7 +1089,248 @@ class _AddClassState extends State<AddClass> {
                     width: 20,
                   ),
                 ],
-              )
+              ),
+
+              //unavilable
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Text(
+                      'Unavailable batches',
+                      style: FlutterFlowTheme.bodyText1.override(
+                          fontFamily: 'Poppins',
+                          fontSize: 19,
+                          fontWeight: FontWeight.w600
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              pastBatch.length==0
+                  ?Center(child: CircularProgressIndicator(),)
+                  :Padding(
+                padding: const EdgeInsets.only(left: 30, right: 30),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: DataTable(
+                    horizontalMargin: 10,
+                    columnSpacing: 20,
+                    columns: [
+                      DataColumn(
+                        label: Text(
+                          "Name",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "University",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "Course",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "Intake",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "Access",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          "Action",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 11),
+                        ),
+                      ),
+                    ],
+                    rows: List.generate(
+                      pastBatch.length,
+                          (index) {
+                        List tutorList=pastBatch[index]['tutors'];
+                        return DataRow(
+                          color: index.isOdd
+                              ? MaterialStateProperty.all(Colors
+                              .blueGrey.shade50
+                              .withOpacity(0.7))
+                              : MaterialStateProperty.all(
+                              Colors.blueGrey.shade50),
+                          cells: [
+                            DataCell(SelectableText(
+                              pastBatch[index]['name'],
+                              style: FlutterFlowTheme.bodyText2.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Colors.black,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                            DataCell(Text(
+                              UniversityIdToName[pastBatch[index]['university']],
+                              style: FlutterFlowTheme.bodyText2.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                            DataCell(SelectableText(
+                              CourseIdToName[pastBatch[index]['course']]??'',
+                              style: FlutterFlowTheme.bodyText2.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Colors.black,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                            DataCell(SelectableText(
+                              InTakeIdToName[pastBatch[index]['inTake']],
+                              style: FlutterFlowTheme.bodyText2.override(
+                                fontFamily: 'Lexend Deca',
+                                color: Colors.black,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                            DataCell(
+                              FFButtonWidget(
+                                onPressed: () async {
+                                  bool pressed = await alert(context,
+                                      'Do you want to change access?');
+                                  if (pressed) {
+
+                                    if(pastBatch[index]['available'] == true){
+                                      FirebaseFirestore.instance
+                                          .collection('class')
+                                          .doc(pastBatch[index]['id'])
+                                          .update({
+                                        'available': !pastBatch[index]['available'],
+                                      });
+
+                                    }else{
+                                      FirebaseFirestore.instance
+                                          .collection('class')
+                                          .doc(pastBatch[index]['id'])
+                                          .update({
+                                        'available': !pastBatch[index]['available'],
+                                      });
+                                    }
+
+                                  }
+
+                                },
+                                text: pastBatch[index]['available'] == true
+                                    ? 'Available'
+                                    : 'Unavailable',
+                                options: FFButtonOptions(
+                                  width: 80,
+                                  height: 30,
+                                  color: Colors.white,
+                                  textStyle: FlutterFlowTheme.subtitle2
+                                      .override(
+                                      fontFamily: 'Poppins',
+                                      color: pastBatch[index]['available'] == true
+                                          ? Colors.teal
+                                          : Colors.red,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                  borderSide: BorderSide(
+                                    color: Colors.transparent,
+                                    width: 1,
+                                  ),
+                                  borderRadius: 8,
+                                ),
+                              ),
+                            ),
+                            DataCell(InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ClassSinglePage(
+                                          classId: pastBatch[index]['id'],
+                                        )));
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.teal,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'View',
+                                    style: FlutterFlowTheme.bodyText2
+                                        .override(
+                                      fontFamily: 'Lexend Deca',
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            )),
+
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+
+              Row(
+                children: [
+
+                  if (pastPageIndex != 0)
+                    ElevatedButton(
+                      onPressed: () {
+                        pPrev();
+                        setState(() {
+
+                        });
+                      },
+                      child: Text('Prev'),
+                    ),
+
+                  pastBatch.length<limit||pastBatch.length==0?
+                  Container():
+                  ElevatedButton(
+                    onPressed: () {
+                      pNext();
+                      setState(() {
+
+                      });
+                    },
+                    child: Text('Next'),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 30,)
 
             ],
           ),

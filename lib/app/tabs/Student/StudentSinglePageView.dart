@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-
 import 'dart:typed_data';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -543,6 +542,9 @@ print('ccccccccccc');
         items=student['form'];
         dueDateView=student['dueDate'].toDate().toString().substring(0,10);
 
+          uploadedFileUrl=student['photo'];
+
+
          if(CourseIdToType[student['course']]=='PG'){
            uploadDocument=Pg;
          }else if(CourseIdToType[student['course']]=='UG'){
@@ -630,7 +632,7 @@ print('ccccccccccc');
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                student['photo']==''?
+                                uploadedFileUrl==''?
                                 Container(
                                   width: 60,
                                   height: 60,
@@ -1145,143 +1147,7 @@ print('ccccccccccc');
                               30, 10, 30, 5),
                           child: Row(
                             children: [
-                              // Expanded(
-                              //   child: Container(
-                              //     width: 330,
-                              //     color: Colors.white,
-                              //     child: Padding(
-                              //       padding: EdgeInsets.fromLTRB(
-                              //           16, 0, 0, 0),
-                              //       child: Row(
-                              //         children: [
-                              //           CountryPickerDropdown(
-                              //             initialValue:
-                              //             countryCode ?? 'IN',
-                              //             itemBuilder:
-                              //             _buildDropdownItem,
-                              //             // itemFilter:  ['AR', 'DE', 'GB', 'CN'].contains(c.isoCode),
-                              //             priorityList: [
-                              //               CountryPickerUtils
-                              //                   .getCountryByIsoCode(
-                              //                   'GB'),
-                              //               CountryPickerUtils
-                              //                   .getCountryByIsoCode(
-                              //                   'CN'),
-                              //             ],
-                              //             sortComparator: (Country a,
-                              //                 Country b) =>
-                              //                 a.isoCode
-                              //                     .compareTo(b.isoCode),
-                              //             onValuePicked:
-                              //                 (Country country) {
-                              //               countryCode =
-                              //                   country.isoCode;
-                              //               phoneCode =
-                              //                   '+' + country.phoneCode;
-                              //
-                              //               setState(() {});
-                              //             },
-                              //           ),
-                              //           SizedBox(
-                              //             width: 10,
-                              //           ),
-                              //           Expanded(
-                              //             child:
-                              //             TextFormField(
-                              //               inputFormatters: <
-                              //                   TextInputFormatter>[
-                              //                 LengthLimitingTextInputFormatter(
-                              //                     10)
-                              //               ],
-                              //               autovalidateMode:
-                              //               AutovalidateMode
-                              //                   .onUserInteraction,
-                              //               keyboardType:
-                              //               TextInputType.phone,
-                              //               validator: (value) {
-                              //                 if (value.isEmpty) {
-                              //                   return "Enter phone number";
-                              //                 } else if (!RegExp(
-                              //                     r'(^(?:[+0]9)?[0-9]{10,12}$)')
-                              //                     .hasMatch(value)) {
-                              //                   return "phone number is not valid";
-                              //                 } else {
-                              //                   return null;
-                              //                 }
-                              //               },
-                              //               controller: mobile,
-                              //               decoration: InputDecoration(
-                              //                 labelText: 'Mobile',
-                              //                 labelStyle:
-                              //                 FlutterFlowTheme
-                              //                     .bodyText2
-                              //                     .override(
-                              //                   fontFamily:
-                              //                   'Montserrat',
-                              //                   color: Colors.black,
-                              //                   fontWeight:
-                              //                   FontWeight.w500,
-                              //                 ),
-                              //                 hintText:
-                              //                 'Please Enter Mobile',
-                              //                 hintStyle:
-                              //                 FlutterFlowTheme
-                              //                     .bodyText2
-                              //                     .override(
-                              //                   fontFamily:
-                              //                   'Montserrat',
-                              //                   color: Colors.black,
-                              //                   fontWeight:
-                              //                   FontWeight.w500,
-                              //                 ),
-                              //                 enabledBorder:
-                              //                 UnderlineInputBorder(
-                              //                   borderSide: BorderSide(
-                              //                     color: Colors
-                              //                         .transparent,
-                              //                     width: 1,
-                              //                   ),
-                              //                   borderRadius:
-                              //                   const BorderRadius
-                              //                       .only(
-                              //                     topLeft:
-                              //                     Radius.circular(
-                              //                         4.0),
-                              //                     topRight:
-                              //                     Radius.circular(
-                              //                         4.0),
-                              //                   ),
-                              //                 ),
-                              //                 focusedBorder:
-                              //                 UnderlineInputBorder(
-                              //                     borderSide:
-                              //                     BorderSide(
-                              //                       color: Colors
-                              //                           .transparent,
-                              //                       width: 1,
-                              //                     ),
-                              //                     borderRadius:
-                              //                     BorderRadius
-                              //                         .circular(
-                              //                         10)),
-                              //               ),
-                              //               style: FlutterFlowTheme
-                              //                   .bodyText2
-                              //                   .override(
-                              //                 fontFamily: 'Montserrat',
-                              //                 color: Colors.black,
-                              //                 fontWeight:
-                              //                 FontWeight.w500,
-                              //               ),
-                              //             ),
-                              //           ),
-                              //
-                              //
-                              //         ],
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
+
                               Expanded(
                                 child: Container(
                                   width: 330,
@@ -1313,9 +1179,7 @@ print('ccccccccccc');
                                   ),
                                 ),
                               ),
-                              SizedBox(
-                                width: 20,
-                              ),
+                              SizedBox(width: 20,),
                               Expanded(
                                 child: InkWell(
                                   onTap: () async {

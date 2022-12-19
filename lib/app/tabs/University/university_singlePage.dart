@@ -68,7 +68,8 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
   TextEditingController eSearch;
   TextEditingController eCourse;
 
-
+  String selectedCourseId;
+  String selectedCourseType;
   bool loaded=false;
   String editCourseName;
   int slectedFeeIndex;
@@ -79,8 +80,6 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
     universityCourses.clear();
 
     print('New : '+universityCourses.length.toString());
-
-
     final name = universityCourses1.where((course) {
       final courseName = course['name'].toString().toLowerCase();
       final input =query.toLowerCase();
@@ -181,9 +180,9 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
   }
 
   getTotal(){
-    if(universityFee.text!=''&&tutionFee.text!=''){
+    if(tutionFee.text!=''){
       double ad=double.tryParse(addmissionFee.text.toString())??0;
-      double un=double.tryParse(universityFee.text.toString());
+      double un=double.tryParse(universityFee.text.toString())??0;
       double tu=double.tryParse(tutionFee.text.toString());
       double ca=double.tryParse(convacationFee.text.toString())??0;
 
@@ -193,12 +192,11 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
   }
 
   getEditTotal(){
-    if(eUniversityFee.text!=''&&eTutionFee.text!=''){
+    if(eTutionFee.text!=''){
       double ead=double.tryParse(eAddmissionFee.text.toString())??0;
-      double eun=double.tryParse(eUniversityFee.text.toString());
+      double eun=double.tryParse(eUniversityFee.text.toString())??0;
       double etu=double.tryParse(eTutionFee.text.toString());
       double eca=double.tryParse(eConvacationFee.text.toString())??0;
-
       eTotalFee.text=(ead+eun+etu+eca).toStringAsFixed(2);
 
     }
@@ -617,7 +615,10 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                         // excludeSelected: false,
                                         onChanged: (text){
                                           setState(() {
-
+                                            selectedCourseId=CourseNameToId[course.text];
+                                            print(selectedCourseId+'  hhhhhhhhhhhh');
+                                            selectedCourseType=CourseIdToType[selectedCourseId];
+                                            print(selectedCourseType+'  kkkkkkkkkkkkk');
                                           });
 
                                         },

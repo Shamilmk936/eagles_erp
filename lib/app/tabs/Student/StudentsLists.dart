@@ -5,6 +5,7 @@ import 'package:smile_erp/flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import '../../../flutter_flow/flutter_flow_util.dart';
+import '../../../flutter_flow/upload_media.dart';
 import '../../app_widget.dart';
 import 'RegisterForm.dart';
 import 'StudentSinglePageView.dart';
@@ -369,6 +370,9 @@ print(studentList.length.toString()+'          nnn');
                           DataColumn(
                             label: Text("Action",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11)),
                           ),
+                          DataColumn(
+                            label: Text(" ",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 11)),
+                          ),
                         ],
                         rows: List.generate(
                           studentList.length,
@@ -380,6 +384,7 @@ print(studentList.length.toString()+'          nnn');
                             String course=CourseIdToName[studentList[index]['course']];
                             String university=UniversityIdToName[studentList[index]['university']];
                             String className=ClassIdToName[studentList[index]['classId']];
+                            String classId=studentList[index]['classId'];
 
                             return DataRow(
                               color: index.isOdd?
@@ -463,6 +468,57 @@ print(studentList.length.toString()+'          nnn');
                                         textStyle: FlutterFlowTheme.subtitle2.override(
                                           fontFamily: 'Poppins',
                                           color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold
+                                        ),
+                                        borderSide: BorderSide(
+                                          color: Colors.transparent,
+                                          width: 1,
+                                        ),
+                                        borderRadius: 8,
+                                      ),
+                                    ),
+                                  ],
+                                ),),
+                                DataCell(  Row(
+                                  children: [
+                                    FFButtonWidget(
+                                      onPressed: () async {
+
+                                        bool pressed=await alert(context, 'Do you want Delete Student?');
+                                        if(pressed){
+
+                                          FirebaseFirestore.instance
+                                          .collection('class')
+                                          .doc(classId)
+                                          .update({
+                                            'students':FieldValue.arrayRemove([studentList[index]['studentId']]),
+                                          }).then((value){
+
+                                            FirebaseFirestore
+                                                .instance
+                                                .collection('candidates')
+                                                .doc(studentList[index]['studentId'])
+                                                // .delete();
+                                            .update({
+                                              'status':3,
+                                            });
+                                          });
+                                        }
+
+                                        setState(() {
+
+                                        });
+
+                                      },
+                                      text: 'Delete',
+                                      options: FFButtonOptions(
+                                        width: 80,
+                                        height: 30,
+                                        color: Colors.white,
+                                        textStyle: FlutterFlowTheme.subtitle2.override(
+                                          fontFamily: 'Poppins',
+                                          color: Colors.red,
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold
                                         ),

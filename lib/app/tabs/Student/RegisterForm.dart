@@ -345,7 +345,6 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
   }
 
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

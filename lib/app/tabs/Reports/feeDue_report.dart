@@ -298,7 +298,14 @@ class _PaymentReportState extends State<PaymentReport> {
       ..setAttribute("download", "${DateTime.now().toString().substring(0,10)}.xlsx")
       ..click();
   }
-  
+
+
+  ScrollController _scrollController = new ScrollController(
+    initialScrollOffset: 0.0,
+    keepScrollOffset: true,
+  );
+
+
   @override
   void initState() {
     today=DateTime.now();
@@ -314,6 +321,7 @@ class _PaymentReportState extends State<PaymentReport> {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           child: Column(
             children: [
               Padding(

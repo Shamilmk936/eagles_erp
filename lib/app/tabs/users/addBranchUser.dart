@@ -615,6 +615,7 @@ class _CreateUsersWidgetState extends State<CreateUsersWidget> {
                                       .collection('admin_users')
                                   .doc('U$uId')
                                       .set({
+                                    'department':'',
                                     'display_name': name.text,
                                     'email': email.text,
                                     'password': password.text,

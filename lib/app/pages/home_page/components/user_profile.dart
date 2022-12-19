@@ -1,5 +1,4 @@
 import 'package:flutter_svg/svg.dart';
-import 'package:smile_erp/app/app_widget.dart';
 import 'package:flutter/material.dart';
 import '../../../../Login/login.dart';
 
@@ -32,7 +31,7 @@ class UserProfile extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "V 1.0.5",
+                "V 1.0.6",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 10,
