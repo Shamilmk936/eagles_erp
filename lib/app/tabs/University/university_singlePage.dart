@@ -767,8 +767,9 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                   child: Row(
                                     children: [
                                       FlutterFlowDropDown(
+
                                         initialOption: duration??'First Year',
-                                        options: ['First Year', 'Second Year','Third Year']
+                                        options: ['6 Months','First Year', 'Second Year','Third Year']
                                             .toList(),
                                         onChanged: (val) => setState(() => duration = val),
                                         width: 180,
@@ -1535,7 +1536,7 @@ class _UniversitySinglePageState extends State<UniversitySinglePage> {
                                     children: [
                                       FlutterFlowDropDown(
                                         initialOption: eDuration,
-                                        options: ['First Year', 'Second Year','Third Year']
+                                        options: ['6 Months','First Year', 'Second Year','Third Year']
                                             .toList(),
                                         onChanged: (val) => setState(() => yearOrMonth = val),
                                         width: 180,

@@ -759,7 +759,6 @@ List data=[];
                                   String email=data[index]['email'];
                                   String imageUrl1=data[index]['logo'];
 
-
                                   return DataRow(
                                     color: index.isOdd?MaterialStateProperty.all(Colors.blueGrey.shade50.withOpacity(0.7)):MaterialStateProperty.all(Colors.blueGrey.shade50),
 
@@ -777,10 +776,9 @@ List data=[];
                                           FFButtonWidget(
                                             onPressed: ()  {
 
-                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>EditUniversity(
+                                              Navigator.push(context, MaterialPageRoute(builder: (context)=>UniversitySinglePage(
                                                 id: data[index].id,
                                               )));
-
 
                                             },
                                             text: 'View',
