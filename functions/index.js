@@ -70,3 +70,23 @@ functions.firestore.document("/webSchedules/{uid}").onCreate((event, context) =>
         console.error(error);
       });
 });
+
+// RAZOR PAY
+
+
+exports.refund =
+functions.firestore.document("/return/{uid}").onCreate((event, context) =>{
+
+  var instance = new Razorpay({ key_id: 'rzp_live_C190kQus1hA6p6', key_secret: 'OUikvDm9Cs3PAJq6LjYaGCIOa' })
+
+    instance.payments.refund(paymentId,{
+      "amount": "1",
+      "speed": "normal",
+      "notes": {
+        "notes_key_1": "Beam me up Scotty.",
+        "notes_key_2": "Engage"
+      },
+      "receipt": "Receipt No. 31"
+    })
+
+});

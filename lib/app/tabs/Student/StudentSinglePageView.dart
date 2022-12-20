@@ -285,7 +285,7 @@ print('ccccccccccc');
 
   // REFUND
 
-  Future<void> generate_ODID(String id) async {
+  Future<void> generate_ODID(String id,String studentId,String paymentAmount) async {
 
     print(id);
 
@@ -297,7 +297,7 @@ print('ccccccccccc');
     print(2);
     String basicAuth = 'Basic ' +
         base64Encode(utf8.encode(
-            '${'rzp_live_C190kQus1hA6p6'}:${'OUikvDm9CsPAJq6LjYaGCIOa'}'));
+            '${'rzp_live_C190kQus1hA6p6'}:${'OUikvDm9Cs3PAJq6LjYaGCIOa'}'));
     print(3);
     request.headers.set(HttpHeaders.authorizationHeader, basicAuth);
 
@@ -310,6 +310,15 @@ print('ccccccccccc');
     response.transform(utf8.decoder).listen((contents) async {
       print(6);
       print('Response : '+contents);
+    });
+
+    FirebaseFirestore.instance
+    .collection('return')
+    .add({
+      'amount':'',
+      'date':DateTime.now(),
+      'paymentId':id,
+      'studentId':studentId
     });
 
   }
@@ -3881,15 +3890,17 @@ print('ccccccccccc');
                                           });
 
                                           String paymentId='';
+                                          String paymentAmount='';
                                           for(var data in student['feeDetails']){
                                             for(var tu in data['tuitionFee']){
                                               print(data['tuitionFee'][0]['paymentId']);
                                               paymentId=data['tuitionFee'][0]['paymentId'];
+                                              paymentAmount=data['tuitionFee'][0]['amount'];
                                             }
                                           }
 
                                           rejectAndRefund(course,emailList,name,intake);
-                                          generate_ODID(paymentId);
+                                          generate_ODID(paymentId,student['studentId'],paymentAmount);
 
                                           Navigator.of(context, rootNavigator: true).pop(false);
 
