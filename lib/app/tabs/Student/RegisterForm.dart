@@ -16,6 +16,7 @@ import '../../../flutter_flow/flutter_flow_widgets.dart';
 import 'package:flutter/material.dart';
 import '../../../flutter_flow/upload_media.dart';
 import '../../app_widget.dart';
+import '../../models/enquiry_model.dart';
 import '../../pages/home_page/home.dart';
 
 class RegistrationFormWidget extends StatefulWidget {
@@ -249,7 +250,8 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
       String name
       ) async {
 
-    FirebaseFirestore.instance.collection('mail')
+    FirebaseFirestore.instance
+        .collection('mail')
         .add({
       'date':DateTime.now(),
       'html':
@@ -261,7 +263,8 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
           '<p>2. Click on Sign up using email/continue with Apple</p>'
           '<p>3. Choose the same email ID used for registration</p>'
           '<p></p>'
-          '<p>application link</p>'
+          '<p>playStore Link</p>'
+          '<p>https://play.google.com/store/apps/details?id=com.firstlogicmetalab.smile_student</p>'
           '<p></p>'
           '<p>Lets do it together.</p>'
           '<p>Coordinator-<var>$course</var></p>'
@@ -344,6 +347,16 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
     });
   }
 
+  QuerySnapshot doc;
+  checkEmail(String emailId) async {
+    doc=await FirebaseFirestore.instance
+        .collection('candidates')
+        .where('email',isEqualTo: emailId)
+        .get();
+    setState(() {
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -670,11 +683,16 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                               } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w]{2,4}')
                                   .hasMatch(email)) {
                                 return "Email not valid";
-                              } else {
+                              } else if(doc.docs.isNotEmpty){
+                                return "Email already registered with us";
+                              }else {
                                 return null;
                               }
                             },
                             obscureText: false,
+                            onChanged: (text){
+                              checkEmail(text);
+                            },
                             decoration: InputDecoration(
                               labelText: 'Email',
                               labelStyle: FlutterFlowTheme
@@ -1711,7 +1729,7 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                     if(firstName.text!=''&&lastName.text!=''&&mobile.text!=''&&email.text!=''&&
                         dob!=''&& address.text!=''&&place.text!=''&&selectedClass!=''&&selectedIntake!=''
                         &&selectedClass!=null&&selectedClass!=''&& admissionFee.text!=''&&universityFee!=''
-                        &&data.length==uploadDocument.length){
+                        &&data.length==uploadDocument.length&& doc.docs.isEmpty){
 
                       bool pressed= await alert(context, 'Register As Student...');
                       if(pressed){
@@ -1727,10 +1745,13 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                             .doc(currentbranchId)
                             .update({
                           'studentId': FieldValue.increment(1),
+                          'enquiryId': FieldValue.increment(1),
                         });
-                        int studentId =
-                        doc.get('studentId');
+                        int studentId = doc.get('studentId');
+                        int enquiryNo=doc.get('enquiryId');
                         studentId++;
+                        enquiryNo++;
+
 
                         double ad=double.tryParse(admissionFee.text)??0;
                         double un=double.tryParse(universityFee.text)??0;
@@ -1778,7 +1799,7 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                         FirebaseFirestore.instance.collection('candidates')
                             .doc(currentbranchShortName+studentId.toString())
                             .set({
-                          'enquiryId':widget.eId,
+                          'enquiryId': widget.eId??'E$currentbranchShortName$enquiryNo',
                           'form':list,
                           'date':DateTime.now(),
                           'status':0,
@@ -1820,6 +1841,34 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                               'status':1,
                               'studentId':currentbranchShortName+studentId.toString(),
                             });
+                          }else{
+                            print(enquiryNo.toString()+'vgggg');
+                            Map  details=  Enquiry(
+                                status: 1,
+                                date: DateTime.now(),
+                                name:'${firstName.text} ${lastName.text}',
+                                place:place.text,
+                                mobile:mobile.text,
+                                email:email.text,
+                                dob:dob,
+                                additionalInfo:"",
+                                educationalDetails:[],
+                                courses:CourseNameToId[course.text],
+                                university:UniversityNameToId[university.text],
+                                userId:currentUserUid,
+                                branchId:currentbranchId,
+                                userEmail:currentUserEmail,
+                                search:setSearchParam(firstName.text+" "+mobile.text),
+                                check:false,
+                                enquiryId:'E'+currentbranchShortName+enquiryNo.toString(),
+                                phoneCode: phoneCode,
+                                countryCode: countryCode
+                            ).toJson();
+
+                            FirebaseFirestore.instance
+                                .collection('enquiry')
+                                .doc('E'+currentbranchShortName+enquiryNo.toString())
+                                .set(details);
                           }
 
                           List StudentList=[];
@@ -1870,8 +1919,8 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                       address.text==''?showUploadMessage(context, 'Please Enter Address'):
                       place.text==''?showUploadMessage(context, 'Please Enter Place'):
                       radioval==''?showUploadMessage(context, 'Please select payment method'):
-                      showUploadMessage(context, 'Please upload all documents');
-
+                      data.length!=uploadDocument.length?showUploadMessage(context, 'Please upload all documents'):
+                      showUploadMessage(context, 'Email already registered with us');
                     }
 
                   },

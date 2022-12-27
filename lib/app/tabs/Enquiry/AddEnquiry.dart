@@ -57,6 +57,11 @@ class _AddEnquiryWidgetState extends State<AddEnquiryWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List educationDetails=[];
 
+  ScrollController _scrollController = new ScrollController(
+    initialScrollOffset: 0.0,
+    keepScrollOffset: true,
+  );
+
   List courseList=[];
   getCourses(String selectesUniversity)async{
     universityCourses=[];
@@ -133,6 +138,7 @@ class _AddEnquiryWidgetState extends State<AddEnquiryWidget> {
       backgroundColor: Color(0xFFECF0F5),
       body: SafeArea(
         child: SingleChildScrollView(
+          controller: _scrollController,
           physics: BouncingScrollPhysics(),
           child: Column(
             mainAxisSize: MainAxisSize.max,
