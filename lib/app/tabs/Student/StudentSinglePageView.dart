@@ -285,43 +285,43 @@ print('ccccccccccc');
 
   // REFUND
 
-  Future<void> generate_ODID(String id,String studentId,String paymentAmount) async {
-
-    print(id);
-
-    final client = HttpClient();
-    final request =
-    await client.postUrl(Uri.parse('https://api.razorpay.com/v1/payments/$id/refund'));
-    request.headers.set(
-        HttpHeaders.contentTypeHeader, "application/json; charset=UTF-8");
-    print(2);
-    String basicAuth = 'Basic ' +
-        base64Encode(utf8.encode(
-            '${'rzp_live_C190kQus1hA6p6'}:${'OUikvDm9Cs3PAJq6LjYaGCIOa'}'));
-    print(3);
-    request.headers.set(HttpHeaders.authorizationHeader, basicAuth);
-
-
-    // request.add(utf8.encode(json.encode(orderOptions)));
-    print(4);
-    final response = await request.close();
-
-    print(5);
-    response.transform(utf8.decoder).listen((contents) async {
-      print(6);
-      print('Response : '+contents);
-    });
-
-    FirebaseFirestore.instance
-    .collection('return')
-    .add({
-      'amount':'',
-      'date':DateTime.now(),
-      'paymentId':id,
-      'studentId':studentId
-    });
-
-  }
+  // Future<void> generate_ODID(String id,String studentId,String paymentAmount) async {
+  //
+  //   print(id);
+  //
+  //   final client = HttpClient();
+  //   final request =
+  //   await client.postUrl(Uri.parse('https://api.razorpay.com/v1/payments/$id/refund'));
+  //   request.headers.set(
+  //       HttpHeaders.contentTypeHeader, "application/json; charset=UTF-8");
+  //   print(2);
+  //   String basicAuth = 'Basic ' +
+  //       base64Encode(utf8.encode(
+  //           '${'rzp_live_C190kQus1hA6p6'}:${'OUikvDm9Cs3PAJq6LjYaGCIOa'}'));
+  //   print(3);
+  //   request.headers.set(HttpHeaders.authorizationHeader, basicAuth);
+  //
+  //
+  //   // request.add(utf8.encode(json.encode(orderOptions)));
+  //   print(4);
+  //   final response = await request.close();
+  //
+  //   print(5);
+  //   response.transform(utf8.decoder).listen((contents) async {
+  //     print(6);
+  //     print('Response : '+contents);
+  //   });
+  //
+  //   FirebaseFirestore.instance
+  //   .collection('return')
+  //   .add({
+  //     'amount':'',
+  //     'date':DateTime.now(),
+  //     'paymentId':id,
+  //     'studentId':studentId
+  //   });
+  //
+  // }
 
 
   void paymentSuccessEmail(
@@ -3863,6 +3863,7 @@ print('ccccccccccc');
                                           student.reference
                                               .update({
                                             'verified':2,
+                                            'active':false
                                           });
                                           setState(() {
 
@@ -3881,44 +3882,68 @@ print('ccccccccccc');
                                         ),
                                       ),
 
-                                      TextButton(
-                                        onPressed: (){
-
-                                          student.reference
-                                              .update({
-                                            'verified':2,
-                                          });
-
-                                          String paymentId='';
-                                          String paymentAmount='';
-                                          for(var data in student['feeDetails']){
-                                            for(var tu in data['tuitionFee']){
-                                              print(data['tuitionFee'][0]['paymentId']);
-                                              paymentId=data['tuitionFee'][0]['paymentId'];
-                                              paymentAmount=data['tuitionFee'][0]['amount'];
-                                            }
-                                          }
-
-                                          rejectAndRefund(course,emailList,name,intake);
-                                          generate_ODID(paymentId,student['studentId'],paymentAmount);
-
-                                          Navigator.of(context, rootNavigator: true).pop(false);
-
-                                          setState(() {
-
-                                          });
-
-                                          Navigator.of(context, rootNavigator: true).pop(false);
-                                        },
-                                        child: Text(
-                                            'Reject and Refund',
-                                            style: TextStyle(
-                                                fontSize: 18.0,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue
-                                            )
-                                        ),
-                                      )
+                                      // TextButton(
+                                      //   onPressed: () async {
+                                      //
+                                      //     student.reference
+                                      //         .update({
+                                      //       'verified':2,
+                                      //       'active':false
+                                      //     });
+                                      //
+                                      //     String paymentId='';
+                                      //     String paymentAmount='';
+                                      //     for(var data in student['feeDetails']){
+                                      //       for(var tu in data['tuitionFee']){
+                                      //         print(data['tuitionFee'][0]['paymentId']);
+                                      //         paymentId=data['tuitionFee'][0]['paymentId'];
+                                      //         paymentAmount=data['tuitionFee'][0]['amount'];
+                                      //       }
+                                      //     }
+                                      //
+                                      //     rejectAndRefund(course,emailList,name,intake);
+                                      //     try{
+                                      //       generate_ODID(paymentId,student['studentId'],paymentAmount);
+                                      //     }
+                                      //     catch(e){
+                                      //       showDialog(
+                                      //         context: context,
+                                      //         builder: (ctx) => AlertDialog(
+                                      //           title:  Text(e.toString()),
+                                      //
+                                      //           actions: <Widget>[
+                                      //             TextButton(
+                                      //               onPressed: () {
+                                      //                 Navigator.of(ctx).pop();
+                                      //               },
+                                      //               child: Container(
+                                      //                 color: Colors.green,
+                                      //                 padding: const EdgeInsets.all(14),
+                                      //                 child: const Text("okay"),
+                                      //               ),
+                                      //             ),
+                                      //           ],
+                                      //         ),
+                                      //       );
+                                      //     }
+                                      //
+                                      //     Navigator.of(context, rootNavigator: true).pop(false);
+                                      //
+                                      //     setState(() {
+                                      //
+                                      //     });
+                                      //
+                                      //     Navigator.of(context, rootNavigator: true).pop(false);
+                                      //   },
+                                      //   child: Text(
+                                      //       'Reject and Refund',
+                                      //       style: TextStyle(
+                                      //           fontSize: 18.0,
+                                      //           fontWeight: FontWeight.bold,
+                                      //           color: Colors.blue
+                                      //       )
+                                      //   ),
+                                      // )
                                     ],
                                   )
                                   );

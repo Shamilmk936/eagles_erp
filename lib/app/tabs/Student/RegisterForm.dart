@@ -1833,7 +1833,7 @@ class _RegistrationFormWidgetState extends State<RegistrationFormWidget> {
                           'courseDuration':courseDuration,
                           'feeDetails':paymentList,
                           'verified':0,
-
+                          'active':true,
                         }).then((value) {
 
                           if(widget.eId!=null){
